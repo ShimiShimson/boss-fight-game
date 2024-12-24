@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boss Fight Game</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <h1>Boss Fight Game</h1>
+
+
+
+        <div class="spells">
+            <div class="icon sword-attack"></div>
+            <div class="icon ice-bolt"></div>
+            <div class="icon fire-bolt"></div>
+            <div class="icon storm-bolt"></div>
+        </div>
+        <div id="description-box">Welcome to the Boss Fight! Prepare for battle!</div>
+        <div id="action-buttons">
+            <button id="fire-spell">Cast Fire Spell</button>
+            <button id="ice-spell">Cast Ice Spell</button>
+            <button id="heal">Heal</button>
+            <button id="restore-mana">Restore Mana</button>
+        </div>
+        <div id="boss-stats">
+            <h2>Boss Stats</h2>
+            <p>HP: <span id="boss-hp">500</span></p>
+        </div>
+        <div id="inventory">
+            <h2>Inventory</h2>
+            <ul id="item-list"></ul>
+        </div>
+        <div id="player-stats">
+            <p>HP: <span id="player-hp">100</span></p>
+            <p>Mana: <span id="player-mana">50</span></p>
+            <p>Magical Power: <span id="player-magical-power">10</span></p>
+        </div>
+    </div>
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <p id="modal-message"></p>
+            <button id="try-again-button">Try again</button>
+        </div>
+    </div>
+    <script src="js/game.js"></script>
+    <script src="js/inventory.js"></script>
+    <script src="js/loot.js"></script>
+</body>
+</html>
