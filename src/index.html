@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+    
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,43 +8,71 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body>
-    <div id="game-container">
-        <h1>Boss Fight Game</h1>
+    <div id="game-container" class="container-fluid">
+        <div class="row">
+            <!-- Inventory (Top Right) -->
+            <div id="inventory" class="col-3">
+                <h2>Inventory</h2>
+                <ul id="item-list" class="inventory-grid"></ul>
+            </div>
 
+            <!-- Boss Area -->
+            <div id="boss-area" class="col-6">
+                <div class="row">
+                    <!-- Boss Actions (Left of Boss Image) -->
+                    <div id="boss-actions" class="col-4">
+                        <h3>Boss Actions</h3>
+                        <p>Attack</p>
+                        <p>Special Skill</p>
+                    </div>
 
+                    <!-- Boss Image -->
+                    <div id="boss-image" class="col-4 text-center">
+                        <h2>Boss Health</h2>
+                        <img src="img/boss.png" alt="Boss Image">
+                        <p>Level: <span id="boss-level">48</span></p>
+                    </div>
 
-        <div class="spells">
-            <div class="icon sword-attack"></div>
-            <div class="icon ice-bolt"></div>
-            <div class="icon fire-bolt"></div>
-            <div class="icon storm-bolt"></div>
+                    <!-- Player Actions (Right of Boss Image) -->
+                    <div id="player-actions" class="col-4">
+                        <h3>Player Actions</h3>
+                        <button class="button">Attack</button>
+                        <button class="button">Heal</button>
+                        <button class="button">Cast Spell</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Player Stats (Bottom Left) -->
+            <div id="player-stats" class="col-3">
+                <h2>Player Stats</h2>
+                <p>HP: <span id="player-hp">100</span></p>
+                <p>Mana: <span id="player-mana">50</span></p>
+                <p>Magical Power: <span id="player-magical-power">10</span></p>
+            </div>
         </div>
-        <div id="description-box">Welcome to the Boss Fight! Prepare for battle!</div>
-        <div id="action-buttons">
-            <button id="fire-spell">Cast Fire Spell</button>
-            <button id="ice-spell">Cast Ice Spell</button>
-            <button id="heal">Heal</button>
-            <button id="restore-mana">Restore Mana</button>
-        </div>
-        <div id="boss-stats">
-            <h2>Boss Stats</h2>
-            <p>HP: <span id="boss-hp">500</span></p>
-        </div>
-        <div id="inventory">
-            <h2>Inventory</h2>
-            <ul id="item-list"></ul>
-        </div>
-        <div id="player-stats">
-            <p>HP: <span id="player-hp">100</span></p>
-            <p>Mana: <span id="player-mana">50</span></p>
-            <p>Magical Power: <span id="player-magical-power">10</span></p>
-        </div>
-    </div>
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <p id="modal-message"></p>
-            <button id="try-again-button">Try again</button>
+
+        <div class="row mt-4">
+            <!-- Equipped Items (Top Left) -->
+            <div id="equipped-items" class="col-3">
+                <h2>Equipped Items</h2>
+                <ul id="equipped-list" class="equipment-grid"></ul>
+            </div>
+
+            <!-- Description Box (Bottom Center) -->
+            <div id="description-box" class="col-6">
+                Welcome to the Boss Fight! Prepare for battle!
+            </div>
+
+            <!-- Action Buttons (Bottom Right) -->
+            <div id="action-buttons" class="col-3 text-center">
+                <button id="fire-spell" class="button">Cast Fire Spell</button>
+                <button id="ice-spell" class="button">Cast Ice Spell</button>
+                <button id="heal" class="button">Heal</button>
+                <button id="restore-mana" class="button">Restore Mana</button>
+            </div>
         </div>
     </div>
     <script src="js/game.js"></script>
