@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-    
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,74 +10,115 @@
 </head>
 
 <body>
-    <div id="game-container" class="container-fluid">
-        <div class="row">
+    <div id="game-container">
+        <div id="game-grid">
             <!-- Equipped Items (Top Left) -->
-            <div id="equipped-items" class="col-3">
+            <div id="equipped-items">
                 <h2>Equipped Items</h2>
-                <ul id="equipped-list" class="equipment-grid"></ul>
-            </div>
-
-            <!-- Boss Area -->
-            <div id="boss-area" class="col-6">
-                <div class="row">
-                    <!-- Boss Actions (Left of Boss Image) -->
-                    <div id="boss-actions" class="col-4">
-                        <h3>Boss Actions</h3>
-                        <p>Attack</p>
-                        <p>Special Skill</p>
-                    </div>
-
-                    <!-- Boss Image -->
-                    <div id="boss-image" class="col-4 text-center">
-                        <h2>Boss Health</h2>
-                        <img src="img/boss.png" alt="Boss Image">
-                        <p>Level: <span id="boss-level">48</span></p>
-                    </div>
-
-                    <!-- Player Actions (Right of Boss Image) -->
-                    <div id="player-actions" class="col-4">
-                        <h3>Player Actions</h3>
-                        <button class="button">Attack</button>
-                        <button class="button">Heal</button>
-                        <button class="button">Cast Spell</button>
-                    </div>
+                <div class="equipment-grid">
+                    <!-- Equipped items slots -->
+                    <div id="eq-slot-1"></div>
+                    <div id="eq-slot-2"></div>
+                    <div id="eq-slot-3"></div>
+                    <div id="eq-slot-4"></div>
+                    <div id="eq-slot-5"></div>
+                    <div id="eq-slot-6"></div>
+                    <div id="eq-slot-7"></div>
+                    <div id="eq-slot-8"></div>
+                    <div id="eq-slot-9"></div>
+                    <div id="eq-slot-10"></div>
+                    <div id="eq-slot-11"></div>
+                    <div id="eq-slot-12"></div>
+                    <div id="eq-slot-13"></div>
+                    <div id="eq-slot-14"></div>
+                    <div id="eq-slot-15"></div>
+                    <div id="eq-slot-16"></div>
                 </div>
             </div>
 
-            <!-- Inventory (Top Right) -->
-            <div id="inventory" class="col-3">
-                <h2>Inventory</h2>
-                <ul id="item-list" class="inventory-grid"></ul>
+            <!-- Boss Actions -->
+            <div id="boss-actions">
+                <h3>Boss Actions</h3>
+                <p>Attack</p>
+                <p>Special Skill</p>
             </div>
-        </div>
 
-        <div class="row mt-4">
-            <!-- Player Stats (Bottom Left) -->
-            <div id="player-stats" class="col-3">
+            <!-- Boss Area -->
+            <div id="boss-area">
+                <h2>Boss Health</h2>
+                <img src="img/boss.png" alt="Boss Image">
+                <p>Level: <span id="boss-level">48</span></p>
+            </div>
+
+            <!-- Player Actions -->
+            <div id="player-actions">
+                <h3>Player Actions</h3>
+                <button class="button">Attack</button>
+                <button class="button">Heal</button>
+                <button class="button">Cast Spell</button>
+            </div>
+
+            <!-- Inventory (Top Right) -->
+            <div id="inventory">
+                <h2>Inventory</h2>
+                <div class="inventory-grid">
+                    <!-- Inventory slots -->
+                    <div id="inv-slot-1"></div>
+                    <div id="inv-slot-2"></div>
+                    <div id="inv-slot-3"></div>
+                    <div id="inv-slot-4"></div>
+                    <div id="inv-slot-5"></div>
+                    <div id="inv-slot-6"></div>
+                    <div id="inv-slot-7"></div>
+                    <div id="inv-slot-8"></div>
+                    <div id="inv-slot-9"></div>
+                    <div id="inv-slot-10"></div>
+                    <div id="inv-slot-11"></div>
+                    <div id="inv-slot-12"></div>
+                    <div id="inv-slot-13"></div>
+                    <div id="inv-slot-14"></div>
+                    <div id="inv-slot-15"></div>
+                    <div id="inv-slot-16"></div>
+                    <div id="inv-slot-17"></div>
+                    <div id="inv-slot-18"></div>
+                    <div id="inv-slot-19"></div>
+                    <div id="inv-slot-20"></div>
+                    <div id="inv-slot-21"></div>
+                    <div id="inv-slot-22"></div>
+                    <div id="inv-slot-23"></div>
+                    <div id="inv-slot-24"></div>
+                    <div id="inv-slot-25"></div>
+                    <div id="inv-slot-26"></div>
+                    <div id="inv-slot-27"></div>
+                    <div id="inv-slot-28"></div>
+                    <div id="inv-slot-29"></div>
+                    <div id="inv-slot-30"></div>
+                    <div id="inv-slot-31"></div>
+                    <div id="inv-slot-32"></div>
+                    <div id="inv-slot-33"></div>
+                    <div id="inv-slot-34"></div>
+                    <div id="inv-slot-35"></div>
+                    <div id="inv-slot-36"></div>
+                </div>
+            </div>
+
+            <!-- Player Stats -->
+            <div id="player-stats">
                 <h2>Player Stats</h2>
                 <p>HP: <span id="player-hp">100</span></p>
                 <p>Mana: <span id="player-mana">50</span></p>
                 <p>Magical Power: <span id="player-magical-power">10</span></p>
             </div>
 
-            <!-- Description Box (Bottom Center) -->
-            <div id="description-box" class="col-6">
-                <h2>Description</h2>
-                Welcome to the Boss Fight! Prepare for battle!
-            </div>
-
-            <!-- Action Buttons (Bottom Right) -->
-            <div id="action-buttons" class="col-3 text-center">
-                <button id="fire-spell" class="button">Cast Fire Spell</button>
-                <button id="ice-spell" class="button">Cast Ice Spell</button>
-                <button id="heal" class="button">Heal</button>
-                <button id="restore-mana" class="button">Restore Mana</button>
+            <!-- Action Buttons -->
+            <div id="action-buttons">
+                <button class="button">Boss Level Increase</button>
+                <button class="button">Boss Level Decrease</button>
+                <button class="button">Fight Boss!</button>
             </div>
         </div>
     </div>
     <script src="js/game.js"></script>
-    <script src="js/inventory.js"></script>
-    <script src="js/loot.js"></script>
 </body>
+
 </html>

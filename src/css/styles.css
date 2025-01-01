@@ -1,57 +1,123 @@
+/* General Styles */
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f0f0f0;
-    color: #333;
     margin: 0;
     padding: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #2a2a2a, #1b1f3a);
+    color: #fff;
 }
 
 #game-container {
-    width: 100%;
-    margin: auto;
-    text-align: center;
+    display: flex;
+    justify-content: center;
     padding: 20px;
 }
 
-.inventory-grid, .equipment-grid {
+#game-grid {
+    display: grid;
+    grid-template-areas:
+        "equipped-items boss-actions boss-area player-actions inventory"
+        "player-stats boss-actions boss-area player-actions inventory"
+        "player-stats action-buttons action-buttons action-buttons inventory";
+    grid-template-columns: 1fr 2fr 3fr 2fr 1fr;
+    gap: 10px;
+    width: 100%;
+    max-width: 1200px;
+}
+
+#equipped-items {
+    grid-area: equipped-items;
+    border: 1px solid #444;
+    padding: 10px;
+    background-color: rgba(40, 40, 50, 0.9);
+}
+
+.equipment-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    list-style: none;
-    padding: 0;
+    grid-template-rows: repeat(4, 1fr);
+    gap: 2px;
+    background-color: #444;
 }
 
-.inventory-grid li, .equipment-grid li {
-    border: 1px solid #ccc;
-    background-color: #fff;
+.equipment-grid div {
+    background-color: #222;
+    border: 1px solid #999;
+    min-height: 50px;
+    min-width: 50px;
+}
+
+/* Boss Actions */
+#boss-actions {
+    grid-area: boss-actions;
+    border: 1px solid #444;
     padding: 10px;
+    background-color: rgba(40, 40, 50, 0.9);
+}
+
+/* Boss Area */
+#boss-area {
+    grid-area: boss-area;
     text-align: center;
-    cursor: pointer;
+    border: 1px solid #444;
+    padding: 10px;
+    background-color: rgba(40, 40, 50, 0.9);
 }
 
-.inventory-grid li:hover, .equipment-grid li:hover {
-    background-color: #e0e0e0;
+/* Player Actions */
+#player-actions {
+    grid-area: player-actions;
+    border: 1px solid #444;
+    padding: 10px;
+    background-color: rgba(40, 40, 50, 0.9);
 }
 
-#description-box {
-    background-color: #fff;
-    border: 1px solid #ccc;
-    padding: 15px;
-    margin: 20px auto;
-    height: 100px;
-    overflow-y: auto;
-    text-align: left;
+/* Inventory */
+#inventory {
+    grid-area: inventory;
+    border: 1px solid #444;
+    padding: 10px;
+    background-color: rgba(40, 40, 50, 0.9);
 }
 
+.inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    gap: 2px;
+    background-color: #444;
+}
+
+.inventory-grid div {
+    background-color: #222;
+    border: 1px solid #999;
+    min-height: 50px;
+    min-width: 50px;
+}
+
+/* Player Stats */
+#player-stats {
+    grid-area: player-stats;
+    border: 1px solid #444;
+    padding: 10px;
+    background-color: rgba(40, 40, 50, 0.9);
+}
+
+/* Action Buttons */
+#action-buttons {
+    grid-area: action-buttons;
+    text-align: center;
+    border: 1px solid #444;
+    padding: 10px;
+    background-color: rgba(40, 40, 50, 0.9);
+}
+
+/* Buttons */
 .button {
-    background-color: #4CAF50;
+    background-color: #6200ea;
+    color: #fff;
     border: none;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 14px;
+    padding: 10px 15px;
     margin: 5px;
     cursor: pointer;
     border-radius: 5px;
@@ -59,90 +125,15 @@ body {
 }
 
 .button:hover {
-    background-color: #45a049;
+    background-color: #3700b3;
 }
 
-#boss-area {
-    background-color: #f8f9fa;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-#boss-image img {
-    width: 100px;
-    height: auto;
-    margin: 10px 0;
-}
-
-#player-stats, #inventory, #equipped-items {
-    background-color: #f8f9fa;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-#action-buttons {
-    margin-top: 20px;
-}
-
-#boss-actions, #player-actions {
-    text-align: left;
-}
-
-#boss-actions h3, #player-actions h3 {
+/* Headings and Text */
+h2, h3 {
+    margin: 0 0 10px 0;
     font-size: 16px;
-    font-weight: bold;
-    margin-bottom: 10px;
 }
 
-#player-actions button {
-    display: block;
+p {
     margin: 5px 0;
-    width: 100%;
-}
-
-#boss-area h2, #player-stats h2, #inventory h2, #equipped-items h2 {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.4);
-}
-
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 50%;
-}
-
-.icon {
-    background: url('../img/spell-icons.png') no-repeat top left;
-    width: 75px;
-    height: 75px;
-}
-
-.icon.sword-attack {
-    background-position: 0 0;
-}
-.icon.ice-bolt {
-    background-position: -75px 0;
-}
-.icon.fire-bolt {
-    background-position: 0 -75px;
-}
-.icon.storm-bolt {
-    background-position: -75px -75px;
 }
