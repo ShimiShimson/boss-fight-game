@@ -58,6 +58,6 @@ class Inventory {
 // Example usage
 const inventory = new Inventory();
 document.addEventListener('contextmenu', (event) => {
-    const item = /* logic to get the item based on the event */;
+    const item = /* logic to get the item based on the event */
     inventory.handleRightClick(event, item);
 });
