@@ -27,6 +27,9 @@ body {
 
 #equipped-items {
     grid-area: equipped-items;
+}
+
+.main-grid-item {
     border: 1px solid #444;
     padding: 10px;
     background-color: rgba(40, 40, 50, 0.9);
@@ -50,40 +53,28 @@ body {
 /* Boss Actions */
 #boss-actions {
     grid-area: boss-actions;
-    border: 1px solid #444;
-    padding: 10px;
-    background-color: rgba(40, 40, 50, 0.9);
 }
 
 /* Boss Area */
 #boss-area {
     grid-area: boss-area;
     text-align: center;
-    border: 1px solid #444;
-    padding: 10px;
-    background-color: rgba(40, 40, 50, 0.9);
 }
 
 /* Player Actions */
 #player-actions {
     grid-area: player-actions;
-    border: 1px solid #444;
-    padding: 10px;
-    background-color: rgba(40, 40, 50, 0.9);
 }
 
 /* Inventory */
 #inventory {
     grid-area: inventory;
-    border: 1px solid #444;
-    padding: 10px;
-    background-color: rgba(40, 40, 50, 0.9);
 }
 
 .inventory-grid {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    grid-template-rows: repeat(8, 1fr);
+    grid-template-rows: repeat(6, 1fr);
     gap: 2px;
     background-color: #444;
 }
@@ -98,18 +89,12 @@ body {
 /* Player Stats */
 #player-stats {
     grid-area: player-stats;
-    border: 1px solid #444;
-    padding: 10px;
-    background-color: rgba(40, 40, 50, 0.9);
 }
 
 /* Action Buttons */
 #action-buttons {
     grid-area: action-buttons;
     text-align: center;
-    border: 1px solid #444;
-    padding: 10px;
-    background-color: rgba(40, 40, 50, 0.9);
 }
 
 /* Buttons */
