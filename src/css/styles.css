@@ -1,28 +1,33 @@
 /* General Styles */
+html, body {
+    height: 100%;
+}
+
+
 body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #2a2a2a, #1b1f3a);
+    background: linear-gradient(135deg, #5052b2, #1b1f3a);
     color: #fff;
 }
 
 #game-container {
     display: flex;
     justify-content: center;
-    padding: 20px;
+    padding: 100px;
 }
 
 #game-grid {
     display: grid;
     grid-template-areas:
-        "equipped-items boss-actions boss-area player-actions inventory"
+        "equipped-items boss-actions boss-area player-actions item-stats"
         "player-stats boss-actions boss-area player-actions inventory"
         "player-stats action-buttons action-buttons action-buttons inventory";
     grid-template-columns: 1fr 2fr 3fr 2fr 1fr;
     gap: 10px;
     width: 100%;
-    max-width: 1200px;
+    max-width: 1400px;
 }
 
 #equipped-items {
@@ -65,6 +70,8 @@ body {
 #player-actions {
     grid-area: player-actions;
 }
+
+
 
 /* Inventory */
 #inventory {
