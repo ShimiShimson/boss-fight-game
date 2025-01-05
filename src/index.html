@@ -37,25 +37,24 @@
             </div>
 
             <!-- Boss Actions -->
-            <div id="boss-actions" class="main-grid-item">
-                <h3>Boss Actions</h3>
-                <p>Attack</p>
-                <p>Special Skill</p>
+            <div id="boss-description-div" class="main-grid-item">
+                <h3>Boss Description</h3>
+                <p id="boss-description"></p>
+
             </div>
 
             <!-- Boss Area -->
             <div id="boss-area" class="main-grid-item">
-                <h2>Boss Health</h2>
+                <h2>Boss HP: <span id="boss-current-health"></span>/<span id="boss-max-health"></span></h2>
                 <img src="img/boss.png" alt="Boss Image">
                 <p>Level: <span id="boss-level">48</span></p>
             </div>
 
             <!-- Player Actions -->
-            <div id="player-actions" class="main-grid-item">
-                <h3>Player Actions</h3>
-                <button class="button">Attack</button>
-                <button class="button">Heal</button>
-                <button class="button">Cast Spell</button>
+            <div id="player-description-div" class="main-grid-item">
+                <h3>Player Description</h3>
+                <p id="player-description"></p>
+
             </div>
 
             <!-- Item Stats (Top Right, above Inventory) -->
@@ -113,9 +112,43 @@
             <!-- Player Stats -->
             <div id="player-stats" class="main-grid-item">
                 <h2>Player Stats</h2>
-                <p>HP: <span id="player-hp">100</span></p>
-                <p>Mana: <span id="player-mana">50</span></p>
-                <p>Magical Power: <span id="player-magical-power">10</span></p>
+                <p>HP: <span id="player-current-hp"></span>/<span id="player-max-hp"></span></p>
+                <p>Mana: <span id="player-current-mana"></span>/<span id="player-max-mana"></span></p>
+                <p>Magical Power: <span id="player-magical-power"></span></p>
+            </div>
+
+            <!-- Spell Section (Above Action Buttons) -->
+            <div id="spells" class="main-grid-item">
+                <h3>Spells</h3>
+                <div class="spell-grid">
+                    <!-- Spells -->
+                    <div class="spell" id="spell-1">Basic</div>
+                    <div class="spell" id="spell-2">Fire</div>
+                    <div class="spell" id="spell-3">Ice</div>
+                    <!-- <div class="spell" id="spell-4">Storm</div>
+                    <div class="spell" id="spell-5">Thorns</div>
+                    <div class="spell" id="spell-6">Blood</div>
+                    <div class="spell" id="spell-7">Shadow</div>
+                    <div class="spell" id="spell-8">Heal</div>
+                    <div class="spell" id="spell-9">Dodge</div>
+                    <div class="spell" id="spell-10">Shield</div>
+                    <div class="spell" id="spell-11">Mana</div>
+                    <div class="spell" id="spell-12">Nature Heal</div> -->
+
+                    <!-- Buff Spells -->
+                    <!-- <div class="spell" id="spell-13">Buff Basic</div>
+                    <div class="spell" id="spell-14">Buff Fire</div>
+                    <div class="spell" id="spell-15">Buff Ice</div>
+                    <div class="spell" id="spell-16">Buff Storm</div>
+                    <div class="spell" id="spell-17">Buff Thorns</div>
+                    <div class="spell" id="spell-18">Buff Blood</div>
+                    <div class="spell" id="spell-19">Buff Shadow</div>
+                    <div class="spell" id="spell-20">Buff Heal</div>
+                    <div class="spell" id="spell-21">Buff Dodge</div>
+                    <div class="spell" id="spell-22">Buff Shield</div>
+                    <div class="spell" id="spell-23">Buff Mana</div>
+                    <div class="spell" id="spell-24">Buff Nature Heal</div> -->
+                </div>
             </div>
 
             <!-- Action Buttons -->
@@ -126,7 +159,12 @@
             </div>
         </div>
     </div>
-    <script src="js/game.js"></script>
+    <script src="js/helpers.js" type="module"></script>
+    <script src="js/game.js" type="module"></script>
+    <script src="js/loot.js"></script>
+    <script src="js/inventory.js"></script>
+
+
 </body>
 
 </html>

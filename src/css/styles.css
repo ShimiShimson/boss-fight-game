@@ -1,5 +1,6 @@
 /* General Styles */
-html, body {
+html,
+body {
     height: 100%;
 }
 
@@ -12,17 +13,23 @@ body {
     color: #fff;
 }
 
+p {
+    margin-bottom: 0;
+}
+
 #game-container {
     display: flex;
     justify-content: center;
-    padding: 100px;
+    padding: 50px;
+    padding-top: 100px;
 }
 
 #game-grid {
     display: grid;
     grid-template-areas:
-        "equipped-items boss-actions boss-area player-actions item-stats"
-        "player-stats boss-actions boss-area player-actions inventory"
+        "equipped-items boss-description-div  boss-area player-description-div item-stats"
+        "player-stats boss-description-div boss-area player-description-div inventory"
+        "player-stats spells spells spells inventory"
         "player-stats action-buttons action-buttons action-buttons inventory";
     grid-template-columns: 1fr 2fr 3fr 2fr 1fr;
     gap: 10px;
@@ -51,13 +58,17 @@ body {
 .equipment-grid div {
     background-color: #222;
     border: 1px solid #999;
-    min-height: 50px;
-    min-width: 50px;
+    min-height: 30px;
+    min-width: 30px;
 }
 
 /* Boss Actions */
-#boss-actions {
-    grid-area: boss-actions;
+#boss-description-div {
+    grid-area: boss-description-div;
+}
+
+#player-description-div {
+    grid-area: player-description-div;
 }
 
 /* Boss Area */
@@ -67,11 +78,10 @@ body {
 }
 
 /* Player Actions */
-#player-actions {
-    grid-area: player-actions;
+#player-description-div {
+    grid-area: player-description-div;
+    text-align: right;
 }
-
-
 
 /* Inventory */
 #inventory {
@@ -89,13 +99,47 @@ body {
 .inventory-grid div {
     background-color: #222;
     border: 1px solid #999;
-    min-height: 50px;
-    min-width: 50px;
+    min-height: 30px;
+    min-width: 30px;
 }
 
 /* Player Stats */
 #player-stats {
     grid-area: player-stats;
+}
+
+/* Spell Section */
+#spells {
+    grid-area: spells;
+    border: 1px solid #444;
+    padding: 10px;
+    background-color: rgba(40, 40, 50, 0.9);
+}
+
+.spell-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    overflow: hidden;
+}
+
+.spell {
+    font-size: 12px;
+    background-color: rgba(40, 40, 50, 0.9);
+    /* Placeholder color */
+    height: 50px;
+    /* Square shape */
+    width: 50px;
+    /* Square shape */
+    border: 1px solid #444;
+    margin: 2px;
+}
+
+.spell:nth-child(odd) {
+    border: 3px solid red;
+}
+
+.spell:nth-child(even) {
+    border: 3px solid blue;
 }
 
 /* Action Buttons */
@@ -121,11 +165,12 @@ body {
 }
 
 /* Headings and Text */
-h2, h3 {
+h2,
+h3 {
     margin: 0 0 10px 0;
     font-size: 16px;
 }
 
-p {
+/* p {
     margin: 5px 0;
-}
+} */
