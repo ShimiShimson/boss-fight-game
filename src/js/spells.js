@@ -1,5 +1,6 @@
 import { player } from "./player.js";
 import { gameClock } from "./clock.js";
+import { $ } from "./helpers.js";
 
 class Spell {
     constructor({        
@@ -7,7 +8,6 @@ class Spell {
         name,
         nameid,
         actionType,
-        damage,
         manacost,
         healthcost,
         manarestore,
@@ -18,13 +18,12 @@ class Spell {
         buffamount,
         buffduration,
         cooldown,
-        effects = []
+        effect
     }) {
         this.description = description;
         this.name = name;
         this.nameid = nameid;
         this.actionType = actionType;
-        this.damage = damage;
         this.manacost = manacost;
         this.healthcost = healthcost;
         this.manarestore = manarestore;
@@ -35,7 +34,7 @@ class Spell {
         this.buffamount = buffamount;
         this.buffduration = buffduration;
         this.cooldown = cooldown;
-        this.effects = effects;
+        this.effect = effect;
         this.lastCastTime = null;
     }
 
@@ -44,9 +43,9 @@ class Spell {
         if (this.lastCastTime === null) return true;
 
         const currentTime = gameClock.getTime();
-        console.log(currentTime)
-        console.log(this.lastCastTime)
-        console.log(currentTime - this.lastCastTime)
+        // console.log('currentTime', currentTime)
+        // console.log('this.lastCastTime', this.lastCastTime)
+        // console.log('currentTime - this.lastCastTime', currentTime - this.lastCastTime)
 
         console.log(this.cooldown)
         const isOnCooldown = currentTime - this.lastCastTime < this.cooldown;
@@ -67,39 +66,86 @@ class Spell {
     }
 
 
-    cast(caster, target, elementDamage) {
-        console.log(caster.stats.total.currentMana)
+    cast(caster, target) {
+        // console.log('this.manacost', this.manacost);
+        // console.log(caster.stats.total.currentMana)
         if (!this.isOffCooldown() || !this.hasEnoughMana(caster)) return false;
 
-        console.log('casting')
+        console.log('casting...')
         this.lastCastTime = gameClock.getTime();
-        console.log(caster.stats.total.currentMana)
-        caster.stats.total.currentMana -= this.manacost * target.level;
-        console.log(caster.stats.total.currentMana)
+        // console.log('currentMana', caster.stats.total.currentMana)
+        caster.stats.total.currentMana -= this.manacost * target.stats.level;
+
+        // console.log('caster.stats.total.currentMana', caster.stats.total.currentMana);
 
         console.log(`${this.name} is cast!`);
-        this.effects.forEach((effect) => effect(caster, target, elementDamage));
+        this.effect(caster, target);
     }
 }
 
 
 
-
-const damageMagicEffect = (caster, target, elementDamage) => {
-    const finalDamage = Math.floor(caster.stats.total.totalDamage / 2 + elementDamage + caster.stats.total.totalMagicPow / 2);
-    target.currentHp -= finalDamage;
-    console.log(`${target.name} takes ${finalDamage} damage! Remaining HP: ${target.currentHp}`);
-};
-
 export const spells = {
+    restoreHealth: function(caster) {
+        const lifesteal = Math.floor((caster.stats.total.totalLifesteal * caster.stats.buffs.buffLifesteal * caster.stats.nerfs.nerfLifesteal) / 4);
+
+
+
+        // console.log('lifesteal', lifesteal)
+        let currentHP = caster.stats.total.currentHP;
+        const totalHP = caster.stats.total.totalHP;
+        console.log('------------------------------');
+
+        currentHP += lifesteal;
+        console.log('currentHP', currentHP)
+        if (currentHP > totalHP) {
+            currentHP = totalHP;
+        }
+    },
+
+    restoreMana: function(caster) {
+        let currentMana = caster.stats.total.currentMana;
+        const totalMana = caster.stats.total.totalMana;
+
+        console.log('currentMana', currentMana);
+
+        currentMana += Math.floor(totalMana/10);
+        if (currentMana > totalMana) {
+            currentMana = totalMana;
+        }
+        console.log(`${caster.name} restores ${Math.floor(totalMana/10)} mana! Current mana: ${caster.stats.total.currentMana}`);
+
+        // console.log('currentMana', currentMana);
+    },
+
+    basicAttack: new Spell({
+        description: "Attack",
+        name: "basicAttack",
+        nameid: "spell-basic",
+        manacost: 0,
+        healthcost: 0,
+        cooldown: 2000,
+        effect: (caster, target) => {
+            spells.restoreHealth(caster);
+            spells.restoreMana(caster);
+                
+
+            const finalDamage = Math.floor(caster.stats.total.totalDamage * caster.stats.buffs.buffDamage * caster.stats.nerfs.nerfDamage);
+            console.log('final BASIC Damage', finalDamage)
+
+            target.stats.total.currentHP -= finalDamage;
+
+        }
+    }),
+
+
 
     iceBolt: new Spell({
         description: "Icebolt",
-        name: "icebolt",
-        nameid: "#icebolt",
+        name: "iceBolt",
+        nameid: "spell-ice",
         actionType: "damage",
-        damage: 0,  // This will be calculated
-        manacost: 50,
+        manacost: 10,
         healthcost: 0,
         manarestore: 0,
         healthrestore: 0,
@@ -109,7 +155,17 @@ export const spells = {
         buffamount: 0,
         buffduration: undefined,
         cooldown: 5000,
-        effects: [damageMagicEffect]
+        effect: (caster, target) => {
+            
+            const totalDamage = (caster.stats.total.totalDamage / 2) * caster.stats.buffs.buffDamage * caster.stats.nerfs.nerfDamage;
+            const iceDMG = caster.stats.total.totalIceDMG * caster.stats.buffs.buffIce * caster.stats.nerfs.nerfIce;
+            const magicPow = (caster.stats.total.totalMagicPow / 2) * caster.stats.buffs.buffMagicPow * caster.stats.nerfs.nerfMagicPow;
+
+            const finalDamage = Math.floor(totalDamage + iceDMG + magicPow);
+
+            target.stats.total.currentHP -= finalDamage;
+            console.log(`${target.name} takes ${finalDamage} ice damage! Remaining HP: ${target.stats.total.currentHP}`);
+        }
     })
 
 

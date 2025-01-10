@@ -3,7 +3,7 @@ import { gameClock } from "./clock.js";
 class Player {
     constructor(name, stats, gameClock) {
         this.name = name;
-        this.stats = stats; // Example: { attack: 100, defense: 50, health: 1000, mana: 200 }
+        this.stats = stats;
         this.gameClock = gameClock;
     }
 
@@ -22,89 +22,6 @@ class Player {
         glove: {},
     };
 
-    //   useAbility(spellName) {
-    //     const spell = spellobject[spellName];
-    //     if (!spell) {
-    //       console.log(`Spell ${spellName} does not exist.`);
-    //       return;
-    //     }
-
-    //     const currentTime = this.gameClock.getTime();
-
-    //     // Check cooldown
-    //     if (this.cooldowns[spellName] && currentTime < this.cooldowns[spellName]) {
-    //       console.log(`${spellName} is on cooldown!`);
-    //       return;
-    //     }
-
-    //     // Check mana and health cost
-    //     if (this.stats.mana < spell.manacost) {
-    //       console.log(`${this.name} does not have enough mana to cast ${spellName}!`);
-    //       return;
-    //     }
-
-    //     if (this.stats.health < spell.healthcost) {
-    //       console.log(`${this.name} does not have enough health to cast ${spellName}!`);
-    //       return;
-    //     }
-
-    //     // Apply spell effects
-    //     console.log(`${this.name} used ${spellName}: ${spell.description}`);
-
-    //     // Reduce mana and health
-    //     this.stats.mana -= spell.manacost;
-    //     this.stats.health -= spell.healthcost;
-
-    //     // Damage or Heal
-    //     if (spell.actionType === "damage") {
-    //       console.log(`${spellName} dealt ${spell.damage} damage!`);
-    //     } else if (spell.actionType === "heal") {
-    //       this.stats.health += spell.healthrestore;
-    //       console.log(`${spellName} healed ${spell.healthrestore} health!`);
-    //     } else if (spell.actionType === "mana") {
-    //       this.stats.mana += spell.manarestore;
-    //       console.log(`${spellName} restored ${spell.manarestore} mana!`);
-    //     }
-
-    //     // Apply Buff
-    //     if (spell.buffname) {
-    //       const buff = {
-    //         name: spell.buffname,
-    //         amount: spell.buffamount,
-    //         expiresAt: currentTime + spell.buffduration,
-    //       };
-    //       this.activeBuffs.push(buff);
-    //       console.log(`${this.name} gained buff ${spell.buffname} with amount ${spell.buffamount}.`);
-    //     }
-
-    //     // Set cooldown
-    //     this.cooldowns[spellName] = currentTime + spell.cooldown;
-
-    //     // Handle repeat and delay
-    //     if (spell.repeat > 0) {
-    //       let repeatCount = 0;
-    //       const interval = setInterval(() => {
-    //         repeatCount++;
-    //         if (repeatCount >= spell.repeat) {
-    //           clearInterval(interval);
-    //         }
-
-    //         if (spell.actionType === "damage") {
-    //           console.log(`${spellName} dealt ${spell.damage} damage (repeat ${repeatCount})!`);
-    //         } else if (spell.actionType === "heal") {
-    //           this.stats.health += spell.healthrestore;
-    //           console.log(`${spellName} healed ${spell.healthrestore} health (repeat ${repeatCount})!`);
-    //         }
-    //       }, spell.delay);
-    //     }
-    //   }
-
-
-    // Display current stats and buffs
-    showStats() {
-        console.log(`Player Stats:`, this.stats);
-        console.log(`Active Buffs:`, this.activeBuffs);
-    }
 }
 
 
@@ -118,9 +35,9 @@ const playerStats = {
 
 
     total: {
-        totalHP: 100,
-        currentHP: 0,
-        totalMana: 0,
+        totalHP: 10000,
+        currentHP: 100,
+        totalMana: 50,
         currentMana: 50,
         totalDodge: 0,
         totalMagicPow: 10,
@@ -133,7 +50,7 @@ const playerStats = {
         totalShadowDMG: 0,
         totalNatureDMG: 0,
         totalHealPow: 0,
-        totalLifesteal: 0,
+        totalLifesteal: 10,
     },
 
     cooldowns: {
@@ -166,37 +83,37 @@ const playerStats = {
 
 
     buffs: {
-        buffHealth: 0,
-        buffMana: 0,
-        buffDodge: 0,
-        buffMagicPow: 0,
-        buffDamage: 0,
-        buffIceDMG: 0,
-        buffFireDMG: 0,
-        buffStormDMG: 0,
-        buffBloodDMG: 0,
-        buffCritical: 0,
-        buffShadowDMG: 0,
-        buffNatureDMG: 0,
-        buffHealPow: 0,
-        buffLifesteal: 0,
+        buffHealth: 1,
+        buffMana: 1,
+        buffDamage: 1,
+        buffMagicPow: 1,
+        buffDodge: 1,
+        buffIce: 1,
+        buffFire: 1,
+        buffStorm: 1,
+        buffBlood: 1,
+        buffCritical: 1,
+        buffShadow: 1,
+        buffNature: 1,
+        buffHealPow: 1,
+        buffLifesteal: 1,
     },
 
     nerfs: {
-        nerfHealth: 0,
-        nerfMana: 0,
-        nerfDodge: 0,
-        nerfMagicPow: 0,
-        nerfDamage: 0,
-        nerfIceDMG: 0,
-        nerfFireDMG: 0,
-        nerfStormDMG: 0,
-        nerfBloodDMG: 0,
-        nerfCritical: 0,
-        nerfShadowDMG: 0,
-        nerfNatureDMG: 0,
-        nerfHealPow: 0,
-        nerfLifesteal: 0,
+        nerfHealth: 1,
+        nerfMana: 1,
+        nerfDamage: 1,
+        nerfMagicPow: 1,
+        nerfDodge: 1,
+        nerfIce: 1,
+        nerfFire: 1,
+        nerfStorm: 1,
+        nerfBlood: 1,
+        nerfCritical: 1,
+        nerfShadow: 1,
+        nerfNature: 1,
+        nerfHealPow: 1,
+        nerfLifesteal: 1,
     }
 }
 

@@ -1,4 +1,8 @@
 /* General Styles */
+* {
+    box-sizing: border-box;
+}
+
 html,
 body {
     height: 100%;
@@ -11,6 +15,7 @@ body {
     font-family: Arial, sans-serif;
     background: linear-gradient(135deg, #5052b2, #1b1f3a);
     color: #fff;
+
 }
 
 p {
@@ -27,14 +32,26 @@ p {
 #game-grid {
     display: grid;
     grid-template-areas:
+        "boss-hp-bar-div boss-hp-bar-div boss-hp-bar-div boss-hp-bar-div boss-hp-bar-div"
         "equipped-items boss-description-div  boss-area player-description-div item-stats"
         "player-stats boss-description-div boss-area player-description-div inventory"
         "player-stats spells spells spells inventory"
-        "player-stats action-buttons action-buttons action-buttons inventory";
-    grid-template-columns: 1fr 2fr 3fr 2fr 1fr;
+        "player-stats action-buttons action-buttons action-buttons inventory"
+        "player-hp-bar-div player-hp-bar-div player-hp-bar-div player-hp-bar-div player-hp-bar-div";
+    grid-template-columns: 1fr 2fr 2fr 2fr 1fr;
     gap: 10px;
     width: 100%;
     max-width: 1400px;
+}
+
+#boss-hp-bar-div {
+    grid-area: boss-hp-bar-div;
+    text-align: center;
+}
+
+#player-hp-bar-div {
+    grid-area: player-hp-bar-div;
+    text-align: center;
 }
 
 #equipped-items {
@@ -52,23 +69,33 @@ p {
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(4, 1fr);
     gap: 2px;
+    justify-content: center;
+    align-content: center;
     background-color: #444;
+    width: fit-content; /* Prevent the grid from overflowing */
+    height: fit-content; /* Prevent the grid from stretching */
+    margin: auto;
 }
 
 .equipment-grid div {
     background-color: #222;
     border: 1px solid #999;
-    min-height: 30px;
-    min-width: 30px;
+    width: 30px;
+    height: 30px;
+    
 }
 
 /* Boss Actions */
 #boss-description-div {
     grid-area: boss-description-div;
+    height: 500px;
+    overflow-y: auto;
 }
 
 #player-description-div {
     grid-area: player-description-div;
+    height: 500px;
+    overflow-y: auto;
 }
 
 /* Boss Area */
@@ -111,36 +138,158 @@ p {
 /* Spell Section */
 #spells {
     grid-area: spells;
+    display: flex; /* Enable flexbox on the parent */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+
     border: 1px solid #444;
     padding: 10px;
     background-color: rgba(40, 40, 50, 0.9);
+    min-width: fit-content;
+    min-height: fit-content;
 }
 
 .spell-grid {
     display: grid;
-    grid-template-columns: repeat(12, 1fr);
+    grid-template-columns: repeat(12, 50px);
+    grid-auto-rows: 50px;
+    gap: 5px;
     overflow: hidden;
+    align-items: center;
+    justify-items: center;
+    min-width: fit-content;
+    min-height: fit-content;
 }
 
+
+/* SPELL */
 .spell {
     font-size: 12px;
     background-color: rgba(40, 40, 50, 0.9);
-    /* Placeholder color */
     height: 50px;
-    /* Square shape */
     width: 50px;
-    /* Square shape */
     border: 1px solid #444;
     margin: 2px;
+    cursor: pointer;
+    transition: background-image 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    filter: brightness(90%);
+    border: none;
 }
 
-.spell:nth-child(odd) {
-    border: 3px solid red;
+.spell:hover {
+    filter: brightness(125%);
 }
 
-.spell:nth-child(even) {
-    border: 3px solid blue;
+button.spell {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    padding-left: 0;
+    font-size: 0.8rem;
+    font-weight: bold;
 }
+
+/* SPELLS */
+#spell-basic {
+    background: url(../img/spell-icons.png) 0 0;
+}
+
+#buff-basic {
+    background: url(../img/spell-icons.png) 0 -50px;
+}
+
+#spell-ice {
+    background: url(../img/spell-icons.png) 0 -100px;
+}
+
+#buff-ice {
+    background: url(../img/spell-icons.png) 0 -150px;
+}
+
+#spell-fire {
+    background: url(../img/spell-icons.png) 0 -200px;
+}
+
+#buff-fire {
+    background: url(../img/spell-icons.png) 0 -250px;
+}
+
+#spell-storm {
+    background: url(../img/spell-icons.png) 0 -300px;
+}
+
+#buff-storm {
+    background: url(../img/spell-icons.png) 0 -350px;
+}
+
+#spell-nature {
+    background: url(../img/spell-icons.png) 0 -400px;
+}
+
+#buff-nature {
+    background: url(../img/spell-icons.png) 0 -450px;
+}
+
+
+#spell-shadow {
+    background: url(../img/spell-icons.png) 0 -500px;
+}
+
+#buff-shadow {
+    background: url(../img/spell-icons.png) 0 -550px;
+}
+
+
+#spell-blood {
+    background: url(../img/spell-icons.png) 0 -600px;
+}
+
+#buff-blood {
+    background: url(../img/spell-icons.png) 0 -650px;
+}
+
+#spell-heal {
+    background: url(../img/spell-icons.png) 0 -700px;
+}
+
+#buff-heal {
+    background: url(../img/spell-icons.png) 0 -750px;
+}
+
+#spell-dodge {
+    background: url(../img/spell-icons.png) 0 -800px;
+}
+
+#buff-health {
+    background: url(../img/spell-icons.png) 0 -850px;
+}
+
+#spell-mana {
+    background: url(../img/spell-icons.png) 0 -900px;
+}
+
+#spell-lotus {
+    background: url(../img/spell-icons.png) 0 -950px;
+}
+
+#spell-magic {
+    background: url(../img/spell-icons.png) 0 -1000px;
+}
+
+#buff-magic {
+    background: url(../img/spell-icons.png) 0 -1050px;
+}
+
+#spell-placeholder1 {
+    background: url(../img/spell-icons.png) 0 -1100px;
+}
+
+#buff-placeholder1 {
+    background: url(../img/spell-icons.png) 0 -1150px;
+}
+
+
 
 /* Action Buttons */
 #action-buttons {
@@ -149,6 +298,12 @@ p {
 }
 
 /* Buttons */
+button:disabled {
+    background-color: #444;
+    color: #999;
+    cursor: not-allowed;
+}
+
 .button {
     background-color: #6200ea;
     color: #fff;
@@ -164,6 +319,17 @@ p {
     background-color: #3700b3;
 }
 
+
+#fight-boss-btn {
+    background-color: rgb(180, 13, 46);
+}
+
+#fight-boss-btn:hover {
+    background-color: rgb(82, 2, 2);
+}
+
+
+
 /* Headings and Text */
 h2,
 h3 {
@@ -171,6 +337,66 @@ h3 {
     font-size: 16px;
 }
 
-/* p {
-    margin: 5px 0;
-} */
+
+/* Modal container styling */
+#modal {
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+    z-index: 1000;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+/* Overlay styling */
+#overlay {
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+/* Button styling */
+#try-again-button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    background: #007BFF;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#try-again-button:hover {
+    background: #0056b3;
+}
+
+.hp-bar-div {
+    border: 3px black;
+    width: 100%;
+    padding: 0px;
+}
+
+.hp-bar {
+    width: 0;
+    transition: width 0.5s;
+    width: 50%;
+    height: 20px;
+    background-color: darkred;
+}
+
+button {
+    color: white;
+}

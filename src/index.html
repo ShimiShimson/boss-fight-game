@@ -5,13 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Boss Fight Game</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"> -->
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="shortcut icon" href="./img/favicon.png">
 </head>
 
 <body>
     <div id="game-container">
         <div id="game-grid">
+            <div id="boss-hp-bar-div" class="main-grid-item hp-bar-div">
+                <div id="boss-hp-bar" class="hp-bar"></div>
+            </div>
             <!-- Equipped Items (Top Left) -->
             <div id="equipped-items" class="main-grid-item">
                 <h2>Equipped Items</h2>
@@ -45,7 +49,7 @@
 
             <!-- Boss Area -->
             <div id="boss-area" class="main-grid-item">
-                <h2>Boss HP: <span id="boss-current-health"></span>/<span id="boss-max-health"></span></h2>
+                <h2>Boss HP: <span id="boss-current-health"></span>/<span id="boss-total-health"></span></h2>
                 <img src="img/boss.png" alt="Boss Image">
                 <p>Level: <span id="boss-level">48</span></p>
             </div>
@@ -112,51 +116,59 @@
             <!-- Player Stats -->
             <div id="player-stats" class="main-grid-item">
                 <h2>Player Stats</h2>
-                <p>HP: <span id="player-current-hp"></span>/<span id="player-max-hp"></span></p>
-                <p>Mana: <span id="player-current-mana"></span>/<span id="player-max-mana"></span></p>
+                <p>HP: <span id="player-current-hp"></span>/<span id="player-total-hp"></span></p>
+                <p>Mana: <span id="player-current-mana"></span>/<span id="player-total-mana"></span></p>
                 <p>Magical Power: <span id="player-magical-power"></span></p>
             </div>
 
             <!-- Spell Section (Above Action Buttons) -->
             <div id="spells" class="main-grid-item">
-                <h3>Spells</h3>
                 <div class="spell-grid">
                     <!-- Spells -->
-                    <div class="spell" id="spell-1">Basic</div>
-                    <div class="spell" id="spell-2">Fire</div>
-                    <div class="spell" id="spell-3">Ice</div>
-                    <!-- <div class="spell" id="spell-4">Storm</div>
-                    <div class="spell" id="spell-5">Thorns</div>
-                    <div class="spell" id="spell-6">Blood</div>
-                    <div class="spell" id="spell-7">Shadow</div>
-                    <div class="spell" id="spell-8">Heal</div>
-                    <div class="spell" id="spell-9">Dodge</div>
-                    <div class="spell" id="spell-10">Shield</div>
-                    <div class="spell" id="spell-11">Mana</div>
-                    <div class="spell" id="spell-12">Nature Heal</div> -->
+                    <button type="button" class="spell" id="spell-basic">1</button>
+                    <button type="button" class="spell" id="spell-ice">2</button>
+                    <button type="button" class="spell" id="spell-fire">3</button>
+                    <button type="button" class="spell" id="spell-storm">4</button>
+                    <button type="button" class="spell" id="spell-nature">5</button>
+                    <button type="button" class="spell" id="spell-shadow">6</button>
+                    <button type="button" class="spell" id="spell-blood">7</button>
+                    <button type="button" class="spell" id="spell-heal">8</button>
+                    <button type="button" class="spell" id="spell-dodge">9</button>
+                    <button type="button" class="spell" id="spell-mana">0</button>
+                    <button type="button" class="spell" id="spell-magic">-</button>
+                    <button type="button" class="spell" id="spell-placeholder1">=</button>
 
                     <!-- Buff Spells -->
-                    <!-- <div class="spell" id="spell-13">Buff Basic</div>
-                    <div class="spell" id="spell-14">Buff Fire</div>
-                    <div class="spell" id="spell-15">Buff Ice</div>
-                    <div class="spell" id="spell-16">Buff Storm</div>
-                    <div class="spell" id="spell-17">Buff Thorns</div>
-                    <div class="spell" id="spell-18">Buff Blood</div>
-                    <div class="spell" id="spell-19">Buff Shadow</div>
-                    <div class="spell" id="spell-20">Buff Heal</div>
-                    <div class="spell" id="spell-21">Buff Dodge</div>
-                    <div class="spell" id="spell-22">Buff Shield</div>
-                    <div class="spell" id="spell-23">Buff Mana</div>
-                    <div class="spell" id="spell-24">Buff Nature Heal</div> -->
+                    <button type="button" class="spell" id="buff-basic">Buff Basic</button>
+                    <button type="button" class="spell" id="buff-ice">Buff Ice</button>
+                    <button type="button" class="spell" id="buff-fire">Buff Fire</button>
+                    <button type="button" class="spell" id="buff-storm">Buff Storm</button>
+                    <button type="button" class="spell" id="buff-nature">Buff Thorns</button>
+                    <button type="button" class="spell" id="buff-shadow">Buff Shadow</button>
+                    <button type="button" class="spell" id="buff-blood">Buff Blood</button>
+                    <button type="button" class="spell" id="buff-heal">Buff Heal</button>
+                    <button type="button" class="spell" id="buff-health">Buff Health</button>
+                    <button type="button" class="spell" id="spell-lotus">Lotus</button>
+                    <button type="button" class="spell" id="buff-magic">Buff Magic</button>
+                    <button type="button" class="spell" id="buff-placeholder1">Buff PH</button>
                 </div>
             </div>
 
             <!-- Action Buttons -->
             <div id="action-buttons" class="main-grid-item">
-                <button class="button">Boss Level Increase</button>
-                <button class="button">Boss Level Decrease</button>
-                <button class="button">Fight Boss!</button>
+                <button type="button" class="button">Boss Level Decrease</button>
+                <button type="button" id="fight-boss-btn" class="button">Fight Boss!</button>
+                <button type="button" class="button">Boss Level Increase</button>
             </div>
+            <div id="player-hp-bar-div" class="main-grid-item hp-bar-div">
+                <div id="player-hp-bar" class="hp-bar"></div>
+            </div>
+
+            <div id="modal">
+                <p id="modal-message"></p>
+                <button type="button" id="try-again-button">Try Again</button>
+            </div>
+            <div id="overlay"></div>
         </div>
     </div>
     <script src="js/helpers.js" type="module"></script>

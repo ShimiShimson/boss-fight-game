@@ -6,97 +6,188 @@ import { $ } from './helpers.js';
 import { gameClock } from './clock.js';
 import { player } from './player.js';
 import { spells } from './spells.js';
+import Modal from './modal.js';
 
-console.log(player)
+// console.log(player)
 
-let boss;
+const boss = {
+    name: 'Boss',
+    stats: {
+        level: 1,
+
+        total: {
+            totalHP: 100,
+            currentHP: 100,
+            totalDamage: 20,
+        }
+    }
+};
+
+const modal = new Modal();
 
 function resetGame() {
-    boss = {
-        name: 'Boss',
-        level: 1,
-        totalHP: 500,
-        currentHP: 500,
-        damage: 10
-    };
-
     resetStats();
 }
 
-resetGame();
-$('boss-description').prepend('Boss Hp:' + boss.totalHP);
-$('player-description').prepend('Player Hp:' + player.stats.total.totalHP);
+function prepareTryAgainButton() {
+    const tryAgainButton = $('try-again-button');
+
+    tryAgainButton.addEventListener('click', function () {
+        modal.hideModal();
+        resetGame();
+    });
+}
 
 
 function updateDescription(boxName, message) {
-        const descriptionBox = $(boxName);
-        const newMessage = document.createElement('p');
-        newMessage.innerText = message;
-        descriptionBox.prepend(newMessage);
+    const descriptionBox = $(boxName);
+    const newMessage = document.createElement('p');
+    newMessage.innerText = message;
+    descriptionBox.prepend(newMessage);
 }
 
-function damageToBossHp(damage, resistance, source) {
-    const actualDamage = Math.floor(damage * (100 - resistance) / 100);
-    boss.hp -= actualDamage;
-    if (boss.hp < 0) boss.hp = 0;
-    $('boss-hp').textContent = boss.hp;
-    updateDescription(`Boss took ${actualDamage} dmg from ${source}`);
-    checkBossDefeated();
-}
-
-function damageToPlayerHp(damage, source) {
-    player.hp -= damage;
-    if (player.hp < 0) player.hp = 0;
-    $('player-hp').textContent = player.hp;
-    updateDescription(`Player took ${damage} dmg from ${source}`);
-    if (player.hp === 0) {
-        playerDefeated();
-    }
-}
-
-function healPlayerHp(amount) {
-    player.hp += amount;
-    if (player.hp > 100) player.hp = player.maxHp; // Assuming 100 is the max HP
-    $('player-hp').textContent = player.hp;
-    updateDescription(`Player healed ${amount} HP`);
-}
 
 function playerDefeated() {
-    const modal = $('modal');
-    const modalMessage = $('modal-message');
-    const tryAgainButton = $('try-again-button');
+    gameClock.stop();
+    modal.showModal('You are defeated. Would you like to try again?');
 
-    modalMessage.innerText = 'You are defeated. Would you like to try again?';
-    modal.style.display = 'block';
 
-    tryAgainButton.addEventListener('click', resetGame);
 }
 
 function checkBossDefeated() {
-    if (boss.hp <= 0) {
-        updateDescription("You defeated the boss! Looting...");
+    if (boss.stats.total.currentHP <= 0) {
+        updateDescription('boss-description', "Boss is defeated! Looting...");
         // Trigger loot generation here
+        return true;
     }
+    return false;
 }
 
-function restoreMana() {
-    player.mana += 30;
-    updateDescription("You restored 30 mana!");
+function resetStats() {
+    boss.stats.total.currentHP = boss.stats.total.totalHP;
+    player.stats.total.currentHP = player.stats.total.totalHP;
+    player.stats.total.currentMana = player.stats.total.totalMana;
+
     updateDisplays();
 }
+
+
+function startBossAttackLoop() {
+    const bossAttackInterval = setInterval(() => {
+        if (checkBossDefeated()) {
+            clearInterval(bossAttackInterval);
+            return;
+        }
+
+        player.stats.total.currentHP -= boss.stats.total.totalDamage;
+        updateDisplays();
+        updateDescription('boss-description', `Boss attacks for ${boss.stats.total.totalDamage} DMG!`);
+        if (player.stats.total.currentHP <= 0) {
+            clearInterval(bossAttackInterval);
+            playerDefeated();
+            return;
+        }
+    }, 2000);
+}
+
+
+function startFight() {
+    resetStats();
+
+    updateDisplays();
+
+    updateDescription('player-description', `Fight started!`);
+
+    gameClock.start();
+
+    startBossAttackLoop();
+}
+
+function updateHPBars() {
+    const bossHPPercent = boss.stats.total.currentHP / boss.stats.total.totalHP * 100;
+    $('boss-hp-bar').style.width = bossHPPercent + '%';
+
+    const playerHPPercent = player.stats.total.currentHP / player.stats.total.totalHP * 100;
+    $('player-hp-bar').style.width = playerHPPercent + '%';
+
+
+}
+
+//display update
+function updateDisplays() {
+    // console.log($('player-total-hp'))
+    // console.log($('player-current-hp'))
+
+
+    $('boss-current-health').textContent = boss.stats.total.currentHP;
+    $('boss-total-health').textContent = boss.stats.total.totalHP;
+    $('player-current-hp').textContent = player.stats.total.currentHP;
+    $('player-total-hp').textContent = player.stats.total.totalHP;
+    $('player-current-mana').textContent = player.stats.total.currentMana;
+    $('player-total-mana').textContent = player.stats.total.totalMana;
+    
+    // Update other displays if necessary
+    updateHPBars();
+
+    // setTimeout(() => {
+    //     updateProgress(75);
+    // }, 1000);
+
+    // setTimeout(() => {
+    //     updateProgress(25);
+    // }, 3000);
+
+
+
+}
+
+function prepareButtons() {
+    $('fight-boss-btn').addEventListener('click', (e) => {
+        e.target.disabled = true;
+        startFight();
+    });
+
+    $('spell-basic').addEventListener('click', () => {
+        spells.basicAttack.cast(player, boss);
+        updateDisplays();
+        updateDescription('boss-description', `Boss Hp:  ${boss.stats.total.currentHP}`);
+    });
+
+    $('spell-ice').addEventListener('click', () => {
+        spells.iceBolt.cast(player, boss);
+        updateDisplays();
+        updateDescription('boss-description', `Boss Hp:  ${boss.stats.total.currentHP}`);
+    })
+
+    prepareTryAgainButton();
+};
+
 
 // Event listeners for buttons
 document.addEventListener('DOMContentLoaded', () => {
 
-    // console.log('spells', spells);
-    setTimeout(() => {
-        spells.iceBolt.cast(player, boss, player.stats.total.totalIceDMG);
-        console.log('player', player);
-        console.log('boss', boss);
+    console.log('DOM CONTENT LOADED')
 
-        updateDisplays();
-        updateDescription('boss-description', `Boss Hp:  ${boss.currentHP}`);
-    }, 2000);
+    resetGame();
+    updateDisplays();
+    prepareButtons();
+
+    $('boss-description').prepend('Boss Hp:' + boss.stats.total.totalHP);
+    $('player-description').prepend('Player Hp:' + player.stats.total.totalHP);
+
+
+    // console.log('spells', spells);
+    // setTimeout(() => {
+    //     spells.iceBolt.cast(player, boss, player.stats.total.totalIceDMG);
+    //     console.log('player', player);
+    //     console.log('boss', boss);
+
+    //     updateDisplays();
+    //     updateDescription('boss-description', `Boss Hp:  ${boss.stats.total.currentHP}`);
+    // }, 2000);
+
+
+
 
 
     // performSpellAction(spellobject.icebolt);
@@ -110,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //     if (player.mana >= 10) {
     //         player.mana -= 10;
     //         damageToBossHp(player.fireDamage, boss.fireResistance, 'Fire Spell');
-    //         damageToPlayerHp(boss.damage, 'Boss Attack');
+    //         damageToPlayerHp(boss.stats.total.totalDamage, 'Boss Attack');
     //         updateDisplays();
     //     } else {
     //         updateDescription("Not enough mana!");
@@ -121,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //     if (player.mana >= 10) {
     //         player.mana -= 10;
     //         damageToBossHp(player.iceDamage, boss.iceResistance, 'Ice Spell');
-    //         damageToPlayerHp(boss.damage, 'Boss Attack');
+    //         damageToPlayerHp(boss.stats.total.totalDamage, 'Boss Attack');
     //         updateDisplays();
     //     } else {
     //         updateDescription("Not enough mana!");
@@ -132,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //     if (player.mana >= 15) {
     //         player.mana -= 15;
     //         healPlayerHp(player.healPower);
-    //         damageToPlayerHp(boss.damage, 'Boss Attack');
+    //         damageToPlayerHp(boss.stats.total.totalDamage, 'Boss Attack');
     //         updateDisplays();
     //     } else {
     //         updateDescription("Not enough mana to heal!");
@@ -143,27 +234,3 @@ document.addEventListener('DOMContentLoaded', () => {
     //     restoreMana();
     // });
 });
-
-function resetStats() {
-    boss.currentHp = boss.maxHp;
-    player.currentHp = player.maxHp;
-    player.currentMana = player.maxMana;
-
-    updateDisplays();
-}
-
-
-function startFight() {
-    resetStats();
-}
-
-//display update
-function updateDisplays() {
-    $('boss-current-health').textContent = boss.currentHp;
-    $('boss-max-health').textContent = boss.maxHp;
-    $('player-current-hp').textContent = player.currentHp;
-    $('player-max-hp').textContent = player.maxHp;
-    $('player-current-mana').textContent = player.currentMana;
-    $('player-max-mana').textContent = player.maxMana;
-    // Update other displays if necessary
-}
