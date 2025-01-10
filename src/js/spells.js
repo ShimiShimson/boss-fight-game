@@ -1,6 +1,4 @@
-import { player } from "./player.js";
 import { gameClock } from "./clock.js";
-import { $ } from "./helpers.js";
 
 class Spell {
     constructor({        
@@ -80,6 +78,13 @@ class Spell {
 
         console.log(`${this.name} is cast!`);
         this.effect(caster, target);
+
+        if (target.stats.total.currentHP < 0) {
+            target.stats.total.currentHP = 0;
+        }
+        if (caster.stats.total.currentHP < 0) {
+            caster.stats.total.currentHP = 0;
+        }
     }
 }
 
@@ -97,9 +102,10 @@ export const spells = {
         console.log('------------------------------');
 
         currentHP += lifesteal;
-        console.log('currentHP', currentHP)
+
+        caster.stats.total.currentHP = currentHP;
         if (currentHP > totalHP) {
-            currentHP = totalHP;
+            caster.stats.total.currentHP = totalHP;
         }
     },
 
@@ -107,11 +113,12 @@ export const spells = {
         let currentMana = caster.stats.total.currentMana;
         const totalMana = caster.stats.total.totalMana;
 
-        console.log('currentMana', currentMana);
 
         currentMana += Math.floor(totalMana/10);
+
+        caster.stats.total.currentMana = currentMana;
         if (currentMana > totalMana) {
-            currentMana = totalMana;
+            caster.stats.total.currentMana = totalMana;
         }
         console.log(`${caster.name} restores ${Math.floor(totalMana/10)} mana! Current mana: ${caster.stats.total.currentMana}`);
 

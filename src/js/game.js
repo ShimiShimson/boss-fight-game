@@ -5,36 +5,21 @@ import { $ } from './helpers.js';
 // import { handleAction } from './test.js';
 import { gameClock } from './clock.js';
 import { player } from './player.js';
+import { boss } from './boss.js';
 import { spells } from './spells.js';
 import Modal from './modal.js';
 
+import { disableButtonsFrom, createSpellButtons } from './buttons.js';
+
 // console.log(player)
 
-const boss = {
-    name: 'Boss',
-    stats: {
-        level: 1,
-
-        total: {
-            totalHP: 100,
-            currentHP: 100,
-            totalDamage: 20,
-        }
-    }
-};
-
 const modal = new Modal();
-
-function resetGame() {
-    resetStats();
-}
 
 function prepareTryAgainButton() {
     const tryAgainButton = $('try-again-button');
 
     tryAgainButton.addEventListener('click', function () {
         modal.hideModal();
-        resetGame();
     });
 }
 
@@ -76,6 +61,7 @@ function startBossAttackLoop() {
     const bossAttackInterval = setInterval(() => {
         if (checkBossDefeated()) {
             clearInterval(bossAttackInterval);
+            fightOver();
             return;
         }
 
@@ -84,6 +70,7 @@ function startBossAttackLoop() {
         updateDescription('boss-description', `Boss attacks for ${boss.stats.total.totalDamage} DMG!`);
         if (player.stats.total.currentHP <= 0) {
             clearInterval(bossAttackInterval);
+            fightOver();
             playerDefeated();
             return;
         }
@@ -94,13 +81,19 @@ function startBossAttackLoop() {
 function startFight() {
     resetStats();
 
-    updateDisplays();
+    disableButtonsFrom('spell-grid', false);
 
     updateDescription('player-description', `Fight started!`);
 
     gameClock.start();
 
     startBossAttackLoop();
+}
+
+function fightOver() {
+    resetStats();
+    disableButtonsFrom('spell-grid', true);
+    gameClock.stop();
 }
 
 function updateHPBars() {
@@ -125,7 +118,7 @@ function updateDisplays() {
     $('player-total-hp').textContent = player.stats.total.totalHP;
     $('player-current-mana').textContent = player.stats.total.currentMana;
     $('player-total-mana').textContent = player.stats.total.totalMana;
-    
+
     // Update other displays if necessary
     updateHPBars();
 
@@ -166,14 +159,20 @@ function prepareButtons() {
 // Event listeners for buttons
 document.addEventListener('DOMContentLoaded', () => {
 
-    console.log('DOM CONTENT LOADED')
+    console.log('DOM CONTENT LOADED');
 
-    resetGame();
+    createSpellButtons();
+
+    resetStats();
     updateDisplays();
     prepareButtons();
 
     $('boss-description').prepend('Boss Hp:' + boss.stats.total.totalHP);
     $('player-description').prepend('Player Hp:' + player.stats.total.totalHP);
+
+    // DELETE LATER 
+    player.stats.total.currentHP = 900;
+    updateDisplays();
 
 
     // console.log('spells', spells);

@@ -25,8 +25,8 @@ p {
 #game-container {
     display: flex;
     justify-content: center;
-    padding: 50px;
-    padding-top: 100px;
+    padding: 10px;
+    margin: auto;
 }
 
 #game-grid {
@@ -149,7 +149,7 @@ p {
     min-height: fit-content;
 }
 
-.spell-grid {
+.spell-grid-class {
     display: grid;
     grid-template-columns: repeat(12, 50px);
     grid-auto-rows: 50px;

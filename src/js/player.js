@@ -1,10 +1,8 @@
-import { gameClock } from "./clock.js";
 
 class Player {
-    constructor(name, stats, gameClock) {
+    constructor(name, stats) {
         this.name = name;
         this.stats = stats;
-        this.gameClock = gameClock;
     }
 
     items = {
@@ -35,13 +33,13 @@ const playerStats = {
 
 
     total: {
-        totalHP: 10000,
-        currentHP: 100,
+        totalHP: 1000,
+        currentHP: 900,
         totalMana: 50,
         currentMana: 50,
         totalDodge: 0,
         totalMagicPow: 10,
-        totalDamage: 10,
+        totalDamage: 40,
         totalIceDMG: 10,
         totalFireDMG: 0,
         totalStormDMG: 0,
@@ -117,5 +115,5 @@ const playerStats = {
     }
 }
 
-export const player = new Player("Player", playerStats, gameClock);
+export const player = new Player("Player", playerStats);
 
