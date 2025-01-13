@@ -57,21 +57,21 @@ export class Spell {
     applyManacost(target) {
         if (this.manacost) {
             console.log('MANACOST!');
-            target.stats.total.currentMana -= this.manacost * target.stats.level;
+            target.stats.base.currentMana -= this.manacost * target.stats.level;
         }
     }
 
     applyHealthcost(caster) {
         if (this.healthcost) {
             console.log('HEALTHCOST!');
-            caster.stats.total.currentHP -= this.healthcost * caster.stats.level;
+            caster.stats.base.currentHP -= this.healthcost * caster.stats.level;
         }
     }
 
     hasEnoughMana (caster, target) {
         if (this.manacost) {
             const manacost = this.manacost * target.stats.level;
-            if (caster.stats.total.currentMana < manacost) {
+            if (caster.stats.base.currentMana < manacost) {
                 console.log(`${caster.name} doesn't have enough mana to cast ${this.description}!`);
                 return false;
             }
@@ -81,8 +81,8 @@ export class Spell {
 
     hasEnoughHealth(caster) {
         if (this.healthcost) {
-            const healthcost = caster.stats.total.totalHP / this.healthcost; 
-            if (caster.stats.total.currentHP < healthcost) {
+            const healthcost = caster.stats.base.baseHP / this.healthcost; 
+            if (caster.stats.base.currentHP < healthcost) {
                 console.log(`If you cast ${this.description}, it will kill you!`);
                 return false;
             }
@@ -94,37 +94,37 @@ export class Spell {
 
     cast(caster, target) {
         // console.log('this.manacost', this.manacost);
-        // console.log(caster.stats.total.currentMana)
+        // console.log(caster.stats.base.currentMana)
         if (!this.isOffCooldown() || !this.hasEnoughMana(caster, target) || !this.hasEnoughHealth(caster)) return false;
 
         console.log('casting...')
         this.lastCastTime = gameClock.getTime();
         this.applyHealthcost(caster);
         this.applyManacost(target);
-        // console.log('currentMana', caster.stats.total.currentMana)
+        // console.log('currentMana', caster.stats.base.currentMana)
 
 
 
 
         if (typeof this.manarestore === 'function') {
-            caster.stats.total.currentMana += this.manarestore(caster);
+            caster.stats.base.currentMana += this.manarestore(caster);
         }
 
         if (typeof this.healthrestore === 'function') {
-            caster.stats.total.currentHP += this.healthrestore(caster);
+            caster.stats.base.currentHP += this.healthrestore(caster);
         }
 
 
         console.log(`${this.name} is cast!`);
         this.effect(caster, target);
 
-        console.log('target stats total currentHP', target.stats.total.currentHP);
-        if (target.stats.total.currentHP <= 0) {
-            target.stats.total.currentHP = 0;
+        console.log('target stats base currentHP', target.stats.base.currentHP);
+        if (target.stats.base.currentHP <= 0) {
+            target.stats.base.currentHP = 0;
             checkandHandleBossDefeat();
         }
-        if (caster.stats.total.currentHP <= 0) {
-            caster.stats.total.currentHP = 0;
+        if (caster.stats.base.currentHP <= 0) {
+            caster.stats.base.currentHP = 0;
         }
     }
 }
@@ -216,636 +216,396 @@ export class Buff extends Spell {
 
 
 
-export const spells = {
-    restoreHealth: function(caster) {
-        const lifesteal = Math.floor((caster.stats.total.totalLifesteal * caster.stats.buffs.buffLifesteal * caster.stats.nerfs.nerfLifesteal) / 4);
+export const updateSpells = (caster, target) => {
+
+    const casterTotalHP = caster.stats.base.totalHP;
+    const casterCurrentHP = caster.stats.base.currentHP;
+    const casterTotalMana = caster.stats.base.totalMana;
+    const casterCurrentMana = caster.stats.base.currentMana;
+
+    const casterBaseDamage = caster.stats.base.baseDamage;
+    const casterBuffDamage = caster.stats.buffs.buffDamage;
+    const casterNerfDamage = caster.stats.nerfs.nerfDamage;
+
+    const casterBaseMagicPow = caster.stats.base.baseMagicPow;
+    const casterBuffMagicPow = caster.stats.buffs.buffMagicPow;
+    const casterNerfMagicPow = caster.stats.nerfs.nerfMagicPow;
+
+    const casterBaseIceDamage = caster.stats.base.baseIceDamage;
+    const casterBuffIceDamage = caster.stats.buffs.buffIceDamage;
+    const casterNerfIceDamage = caster.stats.nerfs.nerfIceDamage;
+
+    const casterBaseFireDamage = caster.stats.base.baseFireDamage;
+    const casterBuffFireDamage = caster.stats.buffs.buffFireDamage;
+    const casterNerfFireDamage = caster.stats.nerfs.nerfFireDamage;
+
+    const casterBaseStormDamage = caster.stats.base.baseStormDamage;
+    const casterBuffStormDamage = caster.stats.buffs.buffStormDamage;
+    const casterNerfStormDamage = caster.stats.nerfs.nerfStormDamage;
+
+    const casterBaseNatureDamage = caster.stats.base.baseNatureDamage;
+    const casterBuffNatureDamage = caster.stats.buffs.buffNatureDamage;
+    const casterNerfNatureDamage = caster.stats.nerfs.nerfNatureDamage;
+
+    const casterBaseShadowDamage = caster.stats.base.baseShadowDamage;
+    const casterBuffShadowDamage = caster.stats.buffs.buffShadowDamage;
+    const casterNerfShadowDamage = caster.stats.nerfs.nerfShadowDamage;
+
+    const casterBaseBloodDamage = caster.stats.base.baseBloodDamage;
+    const casterBuffBloodDamage = caster.stats.buffs.buffBloodDamage;
+    const casterNerfBloodDamage = caster.stats.nerfs.nerfBloodDamage;
+
+    const casterBaseHealPow = caster.stats.base.baseHealPow;
+    const casterBuffHealPow = caster.stats.buffs.buffHealPow;
+    const casterNerfHealPow = caster.stats.nerfs.nerfHealPow;
+
+    const casterBaseDodge = caster.stats.base.baseDodge;
+    const casterBuffDodge = caster.stats.buffs.buffDodge;
+    const casterNerfDodge = caster.stats.nerfs.nerfDodgeChance;
+
+    const casterBaseLifesteal = caster.stats.base.baseLifesteal;
+    const casterBuffLifesteal = caster.stats.buffs.buffLifesteal;
+    const casterNerfLifesteal = caster.stats.nerfs.nerfLifesteal;
+
+    const casterBaseHealth = caster.stats.base.totalHealth;
+    const casterBuffHealth = caster.stats.buffs.buffHealth;
+    const casterNerfHealth = caster.stats.nerfs.nerfHealth;
+
+    const casterBaseMana = caster.stats.base.totalMana;
+    const casterBuffMana = caster.stats.buffs.buffMana;
+    const casterNerfMana = caster.stats.nerfs.nerfMana;
+
+    return {
+        restoreHealth: function(caster) {
+            const lifesteal = Math.floor(casterBaseLifesteal * casterBuffLifesteal * casterNerfLifesteal / 4);
+
+
+            // console.log('lifesteal', lifesteal)
+            let currentHP = caster.stats.base.currentHP;
+            const totalHP = caster.stats.base.totalHP;
+            console.log('------------------------------');
+
+            console.log('HEALTH RESTORED', lifesteal);
+            currentHP += lifesteal;
+
+            caster.stats.base.currentHP = currentHP;
+            if (currentHP > totalHP) {
+                caster.stats.base.currentHP = totalHP;
+            }
+        },
+
+        restoreMana: function(caster) {
+            let currentMana = caster.stats.base.currentMana;
+            const totalMana = caster.stats.base.totalMana;
+
+
+            currentMana += Math.floor(totalMana/10);
+
+            caster.stats.base.currentMana = currentMana;
+            if (currentMana > totalMana) {
+                caster.stats.base.currentMana = totalMana;
+            }
+            console.log(`${caster.name} restores ${Math.floor(totalMana/10)} mana! Current mana: ${caster.stats.base.currentMana}`);
+
+            // console.log('currentMana', currentMana);
+        },
+
+        // SPELLS
+        basicAttack: new Spell({
+            description: "Attack",
+            name: "basicAttack",
+            nameid: "spell-basic",
+            manacost: 0,
+            healthcost: 0,
+            manarestore: 0,
+            healthrestore: 0,
+            actionType: "damage",
+            repeat: 0,
+            delay: 0,
+            cooldown: 2000,
+            effect: (caster, target) => {
+            console.log(this)
+                spells.restoreHealth(caster);
+                spells.restoreMana(caster);
+                    
+                const finalDamage = Math.floor(casterBaseDamage * casterBuffDamage * casterNerfDamage);
+                console.log('final BASIC Damage', finalDamage)
+
+                target.stats.base.currentHP -= finalDamage;
+            }
+        }),
 
 
 
-        // console.log('lifesteal', lifesteal)
-        let currentHP = caster.stats.total.currentHP;
-        const totalHP = caster.stats.total.totalHP;
-        console.log('------------------------------');
-
-        console.log('HEALTH RESTORED', lifesteal);
-        currentHP += lifesteal;
-
-        caster.stats.total.currentHP = currentHP;
-        if (currentHP > totalHP) {
-            caster.stats.total.currentHP = totalHP;
-        }
-    },
-
-    restoreMana: function(caster) {
-        let currentMana = caster.stats.total.currentMana;
-        const totalMana = caster.stats.total.totalMana;
-
-
-        currentMana += Math.floor(totalMana/10);
-
-        caster.stats.total.currentMana = currentMana;
-        if (currentMana > totalMana) {
-            caster.stats.total.currentMana = totalMana;
-        }
-        console.log(`${caster.name} restores ${Math.floor(totalMana/10)} mana! Current mana: ${caster.stats.total.currentMana}`);
-
-        // console.log('currentMana', currentMana);
-    },
-
-    // SPELLS
-    basicAttack: new Spell({
-        description: "Attack",
-        name: "basicAttack",
-        nameid: "spell-basic",
-        manacost: 0,
-        healthcost: 0,
-        manarestore: 0,
-        healthrestore: 0,
-        actionType: "damage",
-        repeat: 0,
-        delay: 0,
-        cooldown: 2000,
-        effect: (caster, target) => {
-            spells.restoreHealth(caster);
-            spells.restoreMana(caster);
+        iceBolt: new Spell({
+            description: "Icebolt",
+            name: "iceBolt",
+            nameid: "spell-ice",
+            actionType: "damage",
+            manacost: 10,
+            healthcost: 0,
+            manarestore: 0,
+            healthrestore: 0,
+            repeat: 0,
+            delay: 0,
+            cooldown: 5000,
+            effect: (caster, target) => {
                 
-            const finalDamage = Math.floor(caster.stats.total.totalDamage * caster.stats.buffs.buffDamage * caster.stats.nerfs.nerfDamage);
-            console.log('final BASIC Damage', finalDamage)
+                const baseDamage = casterBaseDamage * casterBuffDamage * casterNerfDamage / 2;
+                const iceDMG = caster.stats.base.baseIceDMG * caster.stats.buffs.buffIce;
+                const magicPow = casterMagicPow * casterBuffMagicPow * casterNerfMagicPow / 2;
 
-            target.stats.total.currentHP -= finalDamage;
-        }
-    }),
+                console.log('baseDamage', baseDamage, 'iceDMG', iceDMG, 'magicPow', magicPow)
 
+                const finalDamage = Math.floor((baseDamage + iceDMG + magicPow) * caster.stats.nerfs.nerfIce);
 
+                console.log('final ICE Damage', finalDamage)
 
-    iceBolt: new Spell({
-        description: "Icebolt",
-        name: "iceBolt",
-        nameid: "spell-ice",
-        actionType: "damage",
-        manacost: 10,
-        healthcost: 0,
-        manarestore: 0,
-        healthrestore: 0,
-        repeat: 0,
-        delay: 0,
-        cooldown: 5000,
-        effect: (caster, target) => {
-            
-            const totalDamage = (caster.stats.total.totalDamage / 2) * caster.stats.buffs.buffDamage * caster.stats.nerfs.nerfDamage;
-            const iceDMG = caster.stats.total.totalIceDMG * caster.stats.buffs.buffIce;
-            const magicPow = (caster.stats.total.totalMagicPow / 2) * caster.stats.buffs.buffMagicPow * caster.stats.nerfs.nerfMagicPow;
+                target.stats.base.currentHP -= finalDamage;
+                console.log(`${target.name} takes ${finalDamage} ice damage! Remaining HP: ${target.stats.base.currentHP}`);
+            }
+        }),
 
-            console.log('totalDamage', totalDamage, 'iceDMG', iceDMG, 'magicPow', magicPow)
+        fireBlast: new Spell({
+            description: "Fireblast",
+            name: "fireBlast",
+            nameid: "spell-fire",
+            actionType: "damage",
+            manacost: 10,
+            healthcost: 0,
+            manarestore: 0,
+            healthrestore: 0,
+            repeat: 0,
+            delay: 0,
+            cooldown: 5000,
+            effect: (caster, target) => {
+                const baseDamage = casterBaseDamage * casterBuffDamage * casterNerfDamage / 2;
+                const fireDMG = caster.stats.base.baseFireDMG * caster.stats.buffs.buffFire;
+                const magicPow = casterMagicPow * casterBuffMagicPow * casterNerfMagicPow / 2;
 
-            const finalDamage = Math.floor((totalDamage + iceDMG + magicPow) * caster.stats.nerfs.nerfIce);
+                console.log('baseDamage', baseDamage, 'fireDMG', fireDMG, 'magicPow', magicPow)
 
-            console.log('final ICE Damage', finalDamage)
+                const finalDamage = Math.floor((baseDamage + fireDMG + magicPow) * caster.stats.nerfs.nerfFire);
 
-            target.stats.total.currentHP -= finalDamage;
-            console.log(`${target.name} takes ${finalDamage} ice damage! Remaining HP: ${target.stats.total.currentHP}`);
-        }
-    }),
+                console.log('final ICE Damage', finalDamage)
 
+                target.stats.base.currentHP -= finalDamage;
+                console.log(`${target.name} takes ${finalDamage} fire damage! Remaining HP: ${target.stats.base.currentHP}`);
+            }
+        }),
 
-    // BUFFS
-    buffBasicDamage: new Buff({
-        description: "Buff Basic Damage",
-        name: "buffDamage",
-        nameid: "buff-basic",
-        actionType: "buff",
-        manacost: 10,
-        healthcost: 0,
-        manarestore: 0,
-        healthrestore: 0,
-        repeat: 0,
-        delay: 0,
-        buffName: "buffDamage",
-        buffDuration: 8000,
-        cooldown: 15000,
-    }),
+        fireBlast: new Spell({
+            description: "Fireblast",
+            name: "fireBlast",
+            nameid: "spell-fire",
+            actionType: "damage",
+            manacost: 10,
+            healthcost: 0,
+            manarestore: 0,
+            healthrestore: 0,
+            repeat: 0,
+            delay: 0,
+            cooldown: 5000,
+            effect: (caster, target) => {
+                const baseDamage = casterBaseDamage * casterBuffDamage * casterNerfDamage / 2;
+                const fireDMG = caster.stats.base.baseFireDMG * caster.stats.buffs.buffFire;
+                const magicPow = casterMagicPow * casterBuffMagicPow * casterNerfMagicPow / 2;
 
-    buffIce: new Buff({
-        description: "Buff Ice Damage",
-        name: "buffIce",
-        nameid: "buff-basic",
-        actionType: "buff",
-        manacost: 10,
-        healthcost: 0,
-        manarestore: 0,
-        healthrestore: 0,
-        repeat: 0,
-        delay: 0,
-        buffName: "buffIce",
-        buffDuration: 8000,
-        cooldown: 15000,
-    }),
+                console.log('baseDamage', baseDamage, 'fireDMG', fireDMG, 'magicPow', magicPow)
 
-    buffFire: new Buff({
-        description: "Buff Fire Damage",
-        name: "buffFire",
-        nameid: "buff-basic",
-        actionType: "buff",
-        manacost: 10,
-        healthcost: 0,
-        manarestore: 0,
-        healthrestore: 0,
-        repeat: 0,
-        delay: 0,
-        buffName: "buffFire",
-        buffDuration: 8000,
-        cooldown: 15000,
-    }),
+                const finalDamage = Math.floor((baseDamage + fireDMG + magicPow) * caster.stats.nerfs.nerfFire);
 
-    buffStorm: new Buff({
-        description: "Buff Storm Damage",
-        name: "buffStorm",
-        nameid: "buff-basic",
-        actionType: "buff",
-        manacost: 10,
-        healthcost: 0,
-        manarestore: 0,
-        healthrestore: 0,
-        repeat: 0,
-        delay: 0,
-        buffName: "buffStorm",
-        buffDuration: 8000,
-        cooldown: 15000,
-    }),
+                console.log('final ICE Damage', finalDamage)
 
-    buffNature: new Buff({
-        description: "Buff Nature Damage",
-        name: "buffNature",
-        nameid: "buff-basic",
-        actionType: "buff",
-        manacost: 10,
-        healthcost: 0,
-        manarestore: 0,
-        healthrestore: 0,
-        repeat: 0,
-        delay: 0,
-        buffName: "buffNature",
-        buffDuration: 8000,
-        cooldown: 15000,
-    }),
-
-    buffShadow: new Buff({
-        description: "Buff Shadow Damage",
-        name: "buffShadow",
-        nameid: "buff-basic",
-        actionType: "buff",
-        manacost: 10,
-        healthcost: 0,
-        manarestore: 0,
-        healthrestore: 0,
-        repeat: 0,
-        delay: 0,
-        buffName: "buffShadow",
-        buffDuration: 8000,
-        cooldown: 15000,
-    }),
+                target.stats.base.currentHP -= finalDamage;
+                console.log(`${target.name} takes ${finalDamage} fire damage! Remaining HP: ${target.stats.base.currentHP}`);
+            }
+        }),
 
 
-    bloodSap: new Buff({
-        description: "Caster sacrifices 25% of their health to deal BloodDMG 3 times, and heal caster for BloodDMG/3. Also gets buff for BloodDMG",
-        name: "bloodSap",
-        nameid: "spell-blood",
-        manacost: 0,
-        manarestore: 0,
-        // healthrestore: Math.floor(BloodDMG/3),
-        repeat: 3,
-        delay: 1000,
-        buffname: "buffBlood",
-        // buffamount: Math.floor(BloodDMG ),
-        buffduration: 5000,
-        cooldown: 10000,
-        effect: (caster, target) => {
-            
-        }
-    })
+
+        // BUFFS
+        buffDamage: new Buff({
+            description: "Buff  Damage",
+            name: "buffDamage",
+            nameid: "buff-basic",
+            actionType: "buff",
+            manacost: 10,
+            healthcost: 0,
+            manarestore: 0,
+            healthrestore: 0,
+            repeat: 0,
+            delay: 0,
+            buffName: "buffDamage",
+            buffDuration: 8000,
+            cooldown: 15000,
+        }),
+
+        buffIce: new Buff({
+            description: "Buff Ice Damage",
+            name: "buffIce",
+            nameid: "buff-basic",
+            actionType: "buff",
+            manacost: 10,
+            healthcost: 0,
+            manarestore: 0,
+            healthrestore: 0,
+            repeat: 0,
+            delay: 0,
+            buffName: "buffIce",
+            buffDuration: 8000,
+            cooldown: 15000,
+        }),
+
+        buffFire: new Buff({
+            description: "Buff Fire Damage",
+            name: "buffFire",
+            nameid: "buff-basic",
+            actionType: "buff",
+            manacost: 10,
+            healthcost: 0,
+            manarestore: 0,
+            healthrestore: 0,
+            repeat: 0,
+            delay: 0,
+            buffName: "buffFire",
+            buffDuration: 8000,
+            cooldown: 15000,
+        }),
+
+        buffStorm: new Buff({
+            description: "Buff Storm Damage",
+            name: "buffStorm",
+            nameid: "buff-basic",
+            actionType: "buff",
+            manacost: 10,
+            healthcost: 0,
+            manarestore: 0,
+            healthrestore: 0,
+            repeat: 0,
+            delay: 0,
+            buffName: "buffStorm",
+            buffDuration: 8000,
+            cooldown: 15000,
+        }),
+
+        buffNature: new Buff({
+            description: "Buff Nature Damage",
+            name: "buffNature",
+            nameid: "buff-basic",
+            actionType: "buff",
+            manacost: 10,
+            healthcost: 0,
+            manarestore: 0,
+            healthrestore: 0,
+            repeat: 0,
+            delay: 0,
+            buffName: "buffNature",
+            buffDuration: 8000,
+            cooldown: 15000,
+        }),
+
+        buffShadow: new Buff({
+            description: "Buff Shadow Damage",
+            name: "buffShadow",
+            nameid: "buff-basic",
+            actionType: "buff",
+            manacost: 10,
+            healthcost: 0,
+            manarestore: 0,
+            healthrestore: 0,
+            repeat: 0,
+            delay: 0,
+            buffName: "buffShadow",
+            buffDuration: 8000,
+            cooldown: 15000,
+        }),
 
 
-    // export const spellobject = {
+        bloodSap: new Buff({
+            description: "Caster sacrifices 25% of their health to deal BloodDMG 3 times, and heal caster for BloodDMG/3. Also gets buff for BloodDMG",
+            name: "bloodSap",
+            nameid: "spell-blood",
+            manacost: 0,
+            manarestore: 0,
+            // healthrestore: Math.floor(BloodDMG/3),
+            repeat: 3,
+            delay: 1000,
+            buffname: "buffBlood",
+            // buffamount: Math.floor(BloodDMG ),
+            buffduration: 5000,
+            cooldown: 10000,
+            effect: (caster, target) => {
+                
+            }
+        }),
 
-    //     basicattack: {
-    //       description: "Attack",
-    //       name: "basicattack",
-    //       nameid: ".-basic",
-    //       actionType: "damage",
-    //       damage: Damage,
-    //       manacost: 0,
-    //       healthcost: 0,
-    //       manarestore: Math.floor(Mana/10),
-    //       healthrestore: Math.floor(Lifesteal/4),
-    //       repeat: 0,
-    //       delay: 0,
-    //       buffname: 0,
-    //       buffamount: 0,
-    //       cooldown: 2000,
-    //     },
+        healWings: new Spell({
+            description: "Heals caster for his Heal Power 5 times at cost of 10% of his base mana",
+            name: "healWings",
+            namefunction: "healwings",
+            nameid: "#healwings",
+            damage: 0,
+            manacost: casterTotalMana / 10,
+            healthcost: 0,
+            manarestore: 0,
+            healthrestore: casterBaseHealPow * casterBuffHealPow * casterNerfHealPow / 5,
+            repeat: 5,
+            delay: 800,
+            buffname: 0,
+            buffamount: 0,
+            cooldown: 10000,
+        }),
 
-    //     icebolt: {
-    //       description: "Icebolt",
-    //       name: "icebolt",
-    //       nameid: "#icebolt",
-    //       actionType: "damage",
-    //       damage: Math.floor(Damage/2 + IceDMG + MagicPow/2) ,
-    //       manacost: boss.level * 15,
-    //       healthcost: 0,
-    //       manarestore: 0,
-    //       healthrestore: 0,
-    //       repeat: 0,
-    //       delay: 0,
-    //       buffname: 0,
-    //       buffamount: 0,
-    //       cooldown: 5000,
-    //     },
-
-    //     firebolt: {
-    //       description: "Firebolt",
-    //       name: "firebolt",
-    //       nameid: "#firebolt",
-    //       actionType: "damage",
-    //       damage: Math.floor(Damage/2 + FireDMG + MagicPow/2) ,
-    //       manacost: boss.level * 15,
-    //       healthcost: 0,
-    //       manarestore: 0,
-    //       healthrestore: 0,
-    //       repeat: 0,
-    //       delay: 0,
-    //       buffname: 0,
-    //       buffamount: 0,
-    //       cooldown: 5000,
-    //     },
-
-
-    //     stormbolt: {
-    //       description: "Stormbolt",
-    //       name: "stormbolt",
-    //       nameid: "#stormbolt",
-    //       actionType: "damage",
-    //       damage: Math.floor(Damage/2 + StormDMG + MagicPow/2) ,
-    //       manacost: boss.level * 15,
-    //       healthcost: 0,
-    //       manarestore: 0,
-    //       healthrestore: 0,
-    //       repeat: 0,
-    //       delay: 0,
-    //       buffname: 0,
-    //       buffamount: 0,
-    //       cooldown: 5000,
-    //     },
+        helmet: new Buff({
+            description: "Vigor Of Vikings",
+            name: "helmet",
+            id: "buff-helmet",
+            damage: 0,
+            manacost: target.level * 15,
+            healthcost: 0,
+            manarestore: 0,
+            healthrestore: 0,
+            repeat: 0,
+            delay: 0,
+            buffname: "buffHealth",
+            buffamount: Math.floor(casterTotalMana / 2),
+            cooldown: 10000,
+            buffduration: 15000,
+        }),
 
 
-    //     shadowbolt: {
-    //       description: "Shadowbolt",
-    //       name: "shadowbolt",
-    //       nameid: "#shadowbolt",
-    //       actionType: "damage",
-    //       damage: Math.floor(Damage/2 + ShadowDMG + MagicPow/2) ,
-    //       manacost: boss.level * 15,
-    //       healthcost: 0,
-    //       manarestore: 0,
-    //       healthrestore: 0,
-    //       repeat: 0,
-    //       delay: 2000,
-    //       buffname: 0,
-    //       buffamount: 0,
-    //       cooldown: 5000,
-    //     },
+        lotus: new Spell({
+            description: "Lotus",
+            name: "lotus",
+            id: "spell-lotus",
+            damage: 0,
+            manacost: 0,
+            healthcost: 0,
+            manarestore:  Math.floor(casterBaseMagicPow * casterBuffMagicPow * casterNerfMagicPow / 2),
+            healthrestore:0,
+            repeat: 5,
+            delay: 1000,
+            buffname: 0,
+            buffamount: 0,
+            cooldown: 0,
+        }),
 
-
-    //     bloodstrike: {
-    //       description: "Bloodstrike",
-    //       name: "bloodstrike",
-    //       nameid: "#bloodstrike",
-    //       actionType: "damage",
-    //       damage: Math.floor(BloodDMG + Damage),
-    //       manacost: boss.level * 5,
-    //       healthcost: boss.level * 30,
-    //       manarestore: 0,
-    //       healthrestore: 0,
-    //       repeat: 0,
-    //       delay: 0,
-    //       buffname: "buffLifesteal",
-    //       buffamount: Math.floor(BloodDMG / 2),
-    //       cooldown: 5000,
-    //     },
-
-    //     thorns: {
-    //       description: "Thorns",
-    //       name: "thorns",
-    //       nameid: "#thorns",
-    //       actionType: "damage",
-    //       damage: Math.floor(Damage/6 + NatureDMG/3 + MagicPow/6) ,
-    //       manacost: boss.level * 4,
-    //       healthcost: 0,
-    //       manarestore: 0,
-    //       healthrestore: 0,
-    //       repeat: 3,
-    //       delay: 1000,
-    //       buffname: 0,
-    //       buffamount: 0,
-    //       cooldown: 5000,
-    //     },
-
-    //     natureheal: {
-    //       description: "Natureheal",
-    //       name: "natureheal",
-    //       nameid: "#natureheal",
-    //       actionType: "heal",
-    //       damage: 0,
-    //       manacost: boss.level * 5,
-    //       healthcost: 0,
-    //       manarestore: 0,
-    //       healthrestore: Math.floor(NatureDMG/4),
-    //       repeat: 3,
-    //       delay: 1000,
-    //       buffname: "buffNatureDMG",
-    //       buffamount: Math.floor(NatureDMG),
-    //       buffduration: 5000,
-    //       cooldown: 10000,
-    //     },
-
-    //     heal: {
-    //       description: "Heal",
-    //       name: "heal",
-    //       nameid: "#heal",
-    //       actionType: "heal",
-    //       damage: 0,
-    //       manacost: boss.level * 4,
-    //       healthcost: 0,
-    //       manarestore: 0,
-    //       healthrestore: HealPow*2,
-    //       repeat: 0,
-    //       delay: 0,
-    //       buffname: 0,
-    //       buffamount: 0,
-    //       cooldown: 10000,
-    //     },
-
-    //     dodge: {
-    //       description: "Dodge",
-    //       name: "dodge",
-    //       nameid: "#dodge",
-    //       actionType: "buff",
-    //       damage: 0,
-    //       manacost: boss.level * 15,
-    //       healthcost: 0,
-    //       manarestore: 0,
-    //       healthrestore: 0,
-    //       repeat: 0,
-    //       delay: 0,
-    //       buffname: "buffDodge",
-    //       buffamount: 100,
-    //       cooldown: 10000,
-    //       buffduration: 5000,
-
-    //     },
-
-    //     manarestore: {
-    //       description: "Manarestore",
-    //       name: "manarestore",
-    //       nameid: "#manarestore",
-    //       actionType: "mana",
-    //       damage: 0,
-    //       manacost: 0,
-    //       healthcost: 0,
-    //       manarestore:  Math.floor(MagicPow/2),
-    //       healthrestore:0,
-    //       repeat: 0,
-    //       delay: 0,
-    //       buffname: 0,
-    //       buffamount: 0,
-    //       cooldown: 10000,
-    //     },
-
-    //     lotus: {
-    //       description: "Lotus",
-    //       name: "lotus",
-    //       nameid: "#lotus",
-    //       actionType: "mana",
-    //       damage: 0,
-    //       manacost: 0,
-    //       healthcost: 0,
-    //       manarestore:  Math.floor(MagicPow/2),
-    //       healthrestore:0,
-    //       repeat: 5,
-    //       delay: 1000,
-    //       buffname: 0,
-    //       buffamount: 0,
-    //       cooldown: 0,
-    //     },
-
-    //     buffmagic: {
-    //       description: "Magic Bottle",
-    //       name: "buffmagic",
-    //       nameid: "#buffmagic",
-    //       actionType: "buff",
-    //       damage: 0,
-    //       manacost: boss.level * 25,
-    //       healthcost: 0,
-    //       manarestore: 0,
-    //       healthrestore: 0,
-    //       repeat: 0,
-    //       delay: 0,
-    //       buffname: "buffMagicPow",
-    //       buffamount: Math.floor(MagicPow/2),
-    //       cooldown: 10000,
-    //       buffduration: 5000,
-    //     },
-
-    //     icebuff: {
-    //       description: "Ice Mask",
-    //       name: "icebuff",
-    //       nameid: "#icebuff",
-    //       actionType: "buff",
-    //       damage:  0,
-    //       manacost: boss.level * 10,
-    //       healthcost: 0,
-    //       manarestore: 0,
-    //       healthrestore: 0,
-    //       repeat: 0,
-    //       delay: 0,
-    //       buffname: "buffIceDMG",
-    //       buffamount: Math.floor(IceDMG),
-    //       cooldown: 10000,
-    //       buffduration: 5000,
-    //     },
-
-    //     firebuff: {
-    //       description: "Hand of Fire",
-    //       name: "firebuff",
-    //       nameid: "#firebuff",
-    //       actionType: "buff",
-    //       damage: 0,
-    //       manacost: boss.level * 10,
-    //       healthcost: 0,
-    //       manarestore: 0,
-    //       healthrestore: 0,
-    //       repeat: 0,
-    //       delay: 0,
-    //       buffname: "buffFireDMG",
-    //       buffamount: Math.floor(FireDMG),
-    //       cooldown: 10000,
-    //       buffduration: 5000,
-    //     },
-
-    //     shadowbuff: {
-    //       description: "Eye of Shadow",
-    //       name: "shadowbuff",
-    //       nameid: "#shadowbuff",
-    //       actionType: "buff",
-    //       damage:  0,
-    //       manacost: boss.level * 10,
-    //       healthcost: 0,
-    //       manarestore: 0,
-    //       healthrestore: 0,
-    //       repeat: 0,
-    //       delay: 0,
-    //       buffname: "buffShadowDMG",
-    //       buffamount: Math.floor(ShadowDMG),
-    //       cooldown: 10000,
-    //       buffduration: 5000,
-    //     },
-
-    //     stormbuff: {
-    //       description: "Tree of Storm",
-    //       name: "stormbuff",
-    //       nameid: "#stormbuff",
-    //       actionType: "buff",
-    //       damage: 0,
-    //       manacost: boss.level * 10,
-    //       healthcost: 0,
-    //       manarestore: 0,
-    //       healthrestore: 0,
-    //       repeat: 0,
-    //       delay: 0,
-    //       buffname: "buffStormDMG",
-    //       buffamount: Math.floor(StormDMG ),
-    //       cooldown: 10000,
-    //       buffduration: 5000,
-    //     },
-
-    //     magebuff: {
-    //       description: "Mage Burst",
-    //       name: "magebuff",
-    //       nameid: "#magebuff",
-    //       damage: 0,
-    //       manacost: Math.floor(currentplayermana / 2),
-    //       healthcost: 0,
-    //       manarestore: 0,
-    //       healthrestore: 0,
-    //       repeat: 0,
-    //       delay: 0,
-    //       buffname: "buffMagicPow",
-    //       buffamount: Math.floor(MagicPow /2),
-    //       cooldown: 10000,
-    //       buffduration: 10000,
-    //     },
-
-    //     bloodsap: {
-    //       description: "Blood Sap",
-    //       name: "buffBlood",
-    //       nameid: "#buffBlood",
-    //       damage: Math.floor(BloodDMG/3),
-    //       manacost: 0,
-    //       healthcost: Math.floor(Health / 4),
-    //       manarestore: 0,
-    //       healthrestore: Math.floor(BloodDMG/3),
-    //       repeat: 3,
-    //       delay: 1000,
-    //       buffname: "buffBloodDMG",
-    //       buffamount: Math.floor(BloodDMG ),
-    //       cooldown: 10000,
-    //       buffduration: 5000,
-    //     },
-
-    //     healwings: {
-    //       description: "Heal Wings",
-    //       name: "healwings",
-    //       nameid: "#healwings",
-    //       damage: 0,
-    //       manacost: Math.floor(Mana / 10),
-    //       healthcost: 0,
-    //       manarestore: 0,
-    //       healthrestore: HealPow,
-    //       repeat: 5,
-    //       delay: 800,
-    //       buffname: 0,
-    //       buffamount: 0,
-    //       cooldown: 10000,
-    //     },
-
-    //     defenseheal: {
-    //       description: "Palace of Gods",
-    //       name: "defenseheal",
-    //       nameid: "#defenseheal",
-    //       damage: 0,
-    //       manacost: boss.level*7,
-    //       healthcost: 0,
-    //       manarestore: 0,
-    //       healthrestore: Math.floor(HealPow/2),
-    //       repeat: 3,
-    //       delay: 1000,
-    //       buffname: "buffDodge",
-    //       buffamount: 30,
-    //       buffduration: 4000,
-    //       cooldown: 10000,
-    //     },
-
-    //     attackbuff: {
-    //       description: "Damage Buff",
-    //       name: "attackbuff",
-    //       nameid: "#attackbuff",
-    //       damage: 0,
-    //       manacost: boss.level * 15,
-    //       healthcost: 0,
-    //       manarestore: 0,
-    //       healthrestore: 0,
-    //       repeat: 0,
-    //       delay: 0,
-    //       buffname: "buffDamage",
-    //       buffamount: Math.floor(Damage),
-    //       cooldown: 10000,
-    //       buffduration: 10000,
-    //     },
-
-    //     helmet: {
-    //       description: "Vigor Of Vikings",
-    //       name: "helmet",
-    //       nameid: "#helmet",
-    //       damage: 0,
-    //       manacost: boss.level * 15,
-    //       healthcost: 0,
-    //       manarestore: 0,
-    //       healthrestore: 0,
-    //       repeat: 0,
-    //       delay: 0,
-    //       buffname: "buffHealth",
-    //       buffamount: Math.floor(Mana / 2),
-    //       cooldown: 10000,
-    //       buffduration: 15000,
-    //     },
-
-    //     magicattack: {
-    //       description: "Finger Bolt",
-    //       name: "magicattack",
-    //       nameid: "#magicattack",
-    //       damage: MagicPow,
-    //       manacost: boss.level * 10,
-    //       healthcost: 0,
-    //       manarestore: 0,
-    //       healthrestore: 0,
-    //       repeat: 0,
-    //       delay: 0,
-    //       buffname: 0,
-    //       buffamount: 0,
-    //       cooldown: 7000,
-    //       buffduration: 0,
-    //     },
-
-
-    //   }
-
+        buffMagic: new Buff({
+            nameplayer: "Magic Power Buff 50%",
+            name: "buffMagicPow",
+            nameid: "buff-magic",
+            damage: 0,
+            manacost: Math.floor(currentplayermana / 2),
+            healthcost: 0,
+            manarestore: 0,
+            healthrestore: 0,
+            repeat: 0,
+            delay: 0,
+            buffname: "buffMagicPow",
+            buffamount: Math.floor(casterBaseMagicPow * casterBuffMagicPow * casterNerfMagicPow /2),
+            cooldown: 10000,
+            buffduration: 10000,
+        }),
+    }
 }

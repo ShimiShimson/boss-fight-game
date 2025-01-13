@@ -7,7 +7,7 @@ class Boss {
     stats = {
         level: 1,
 
-        total: {
+        base: {
             totalHP: 100,
             currentHP: 100,
             totalDamage: 80,

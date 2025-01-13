@@ -32,23 +32,23 @@ const playerStats = {
 
 
 
-    total: {
+    base: {
         totalHP: 1000,
         currentHP: 900,
         totalMana: 50,
         currentMana: 50,
-        totalDodge: 0,
-        totalMagicPow: 10,
-        totalDamage: 10,
-        totalIceDMG: 10,
-        totalFireDMG: 0,
-        totalStormDMG: 0,
-        totalCritical: 0,
-        totalBloodDMG: 0,
-        totalShadowDMG: 0,
-        totalNatureDMG: 0,
-        totalHealPow: 0,
-        totalLifesteal: 10,
+        baseDamage: 10,
+        baseMagicPow: 10,
+        baseIceDMG: 10,
+        baseFireDMG: 0,
+        baseStormDMG: 0,
+        baseCritical: 0,
+        baseBloodDMG: 0,
+        baseShadowDMG: 0,
+        baseNatureDMG: 0,
+        baseHealPow: 0,
+        baseLifesteal: 10,
+        baseDodge: 0,
     },
 
 
@@ -57,7 +57,6 @@ const playerStats = {
         buffMana: 1,
         buffDamage: 1,
         buffMagicPow: 1,
-        buffDodge: 1,
         buffIce: 1,
         buffFire: 1,
         buffStorm: 1,
@@ -67,6 +66,7 @@ const playerStats = {
         buffNature: 1,
         buffHealPow: 1,
         buffLifesteal: 1,
+        buffDodge: 1,
     },
 
     nerfs: {
@@ -74,7 +74,6 @@ const playerStats = {
         nerfMana: 1,
         nerfDamage: 1,
         nerfMagicPow: 1,
-        nerfDodge: 1,
         nerfIce: 1,
         nerfFire: 1,
         nerfStorm: 1,
@@ -84,7 +83,9 @@ const playerStats = {
         nerfNature: 1,
         nerfHealPow: 1,
         nerfLifesteal: 1,
+        nerfDodge: 1,
     },
 }
 
 export const player = new Player("Player", playerStats);
+
