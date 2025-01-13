@@ -1,4 +1,5 @@
-import { $ } from './helpers.js';
+import { $ } from "../utils/helpers.js";
+
 
 export default class Modal {
     showModal(message) {

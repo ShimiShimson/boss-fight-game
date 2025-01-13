@@ -1,15 +1,15 @@
+// @ts-nocheck
 // This file contains the main game logic for the boss fight game. 
 // It handles the game loop, player actions, and updates the description box.
 
-import { $ } from './helpers.js';
-// import { handleAction } from './test.js';
+import { $, clearAllTimeouts } from '../utils/helpers.js';
 import { gameClock } from './clock.js';
-import { player } from './player.js';
-import { boss } from './boss.js';
-import { spells } from './spells.js';
-import Modal from './modal.js';
+import { player } from '../characters/player.js';
+import { boss, nerfTimeoutIds } from '../characters/boss.js';
+import { spells } from '../spells/spells.js';
+import Modal from '../ui/modal.js';
 
-import { disableButtonsFrom, createSpellButtons } from './buttons.js';
+import { disableButtonsFrom, createSpellButtons } from '../ui/buttons.js';
 
 // console.log(player)
 
@@ -49,27 +49,51 @@ function checkBossDefeated() {
 }
 
 function resetStats() {
+    // console.log(player.stats.buffs);
+    // console.log(player.stats.nerfs);
+
     boss.stats.total.currentHP = boss.stats.total.totalHP;
     player.stats.total.currentHP = player.stats.total.totalHP;
     player.stats.total.currentMana = player.stats.total.totalMana;
 
+    Object.keys(player.stats.buffs).forEach(key => player.stats.buffs[key] = 1);
+    Object.keys(player.stats.nerfs).forEach(key => player.stats.nerfs[key] = 1);
+    // console.log(player.stats)
+
     updateDisplays();
+
+}
+
+let bossAttackIntervalId = null;
+
+export function checkandHandleBossDefeat() {
+    console.log(boss.stats.total.currentHP)
+    if (boss.stats.total.currentHP <= 0) {
+
+        console.log('//////////////BOSS DEAD!!!//////////////');
+        console.log('bossAttackInterval', bossAttackIntervalId)
+
+        if (bossAttackIntervalId) {
+            clearInterval(bossAttackIntervalId);
+        }
+        updateDescription('boss-description', "Boss is DEAD! Looting...");
+        // Trigger loot generation here
+        fightOver();
+        return true;
+    }
+    return false;
 }
 
 
 function startBossAttackLoop() {
-    const bossAttackInterval = setInterval(() => {
-        if (checkBossDefeated()) {
-            clearInterval(bossAttackInterval);
-            fightOver();
-            return;
-        }
+    bossAttackIntervalId = setInterval(() => {
+        boss.checkAndCastRandomNerf(player);
 
         player.stats.total.currentHP -= boss.stats.total.totalDamage;
         updateDisplays();
         updateDescription('boss-description', `Boss attacks for ${boss.stats.total.totalDamage} DMG!`);
         if (player.stats.total.currentHP <= 0) {
-            clearInterval(bossAttackInterval);
+            clearInterval(bossAttackIntervalId);
             fightOver();
             playerDefeated();
             return;
@@ -80,7 +104,8 @@ function startBossAttackLoop() {
 
 function startFight() {
     resetStats();
-
+    
+    disableButtonsFrom('action-buttons', true);
     disableButtonsFrom('spell-grid', false);
 
     updateDescription('player-description', `Fight started!`);
@@ -91,9 +116,11 @@ function startFight() {
 }
 
 function fightOver() {
-    resetStats();
-    disableButtonsFrom('spell-grid', true);
     gameClock.stop();
+    clearAllTimeouts(nerfTimeoutIds);
+    resetStats();
+    disableButtonsFrom('action-buttons', false);
+    disableButtonsFrom('spell-grid', true);
 }
 
 function updateHPBars() {

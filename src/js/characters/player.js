@@ -39,7 +39,7 @@ const playerStats = {
         currentMana: 50,
         totalDodge: 0,
         totalMagicPow: 10,
-        totalDamage: 40,
+        totalDamage: 10,
         totalIceDMG: 10,
         totalFireDMG: 0,
         totalStormDMG: 0,
@@ -49,34 +49,6 @@ const playerStats = {
         totalNatureDMG: 0,
         totalHealPow: 0,
         totalLifesteal: 10,
-    },
-
-    cooldowns: {
-        basicattackcooldown: false,
-        iceboltcooldown: false,
-        fireboltcooldown: false,
-        stormboltcooldown: false,
-        shadowboltcooldown: false,
-        thornscooldown: false,
-        bloodstrikecooldown: false,
-        healcooldown: false,
-        shieldcooldown: false,
-        buffmagiccooldown: false,
-        naturehealcooldown: false,
-        manarestorecooldown: false,
-
-        icebuffcooldown: false,
-        firebuffcooldown: false,
-        stormbuffcooldown: false,
-        shadowbuffcooldown: false,
-        bloodsapcooldown: false,
-        healwingscooldown: false,
-        helmetcooldown: false,
-        attackbuffcooldown: false,
-        magebuffcooldown: false,
-        lotuscooldown: false,
-        magicattackcooldown: false,
-        defensehealcooldown: false,
     },
 
 
@@ -112,8 +84,7 @@ const playerStats = {
         nerfNature: 1,
         nerfHealPow: 1,
         nerfLifesteal: 1,
-    }
+    },
 }
 
 export const player = new Player("Player", playerStats);
-

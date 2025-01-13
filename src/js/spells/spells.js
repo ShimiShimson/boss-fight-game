@@ -1,6 +1,11 @@
-import { gameClock } from "./clock.js";
+// @ts-nocheck
+import { gameClock } from "../game/clock.js";
+import { checkandHandleBossDefeat } from "../game/game.js";
 
-class Spell {
+export const buffTimeoutIds = [];
+
+
+export class Spell {
     constructor({        
         description,
         name,
@@ -12,9 +17,6 @@ class Spell {
         healthrestore,
         repeat,
         delay,
-        buffname,
-        buffamount,
-        buffduration,
         cooldown,
         effect
     }) {
@@ -28,9 +30,6 @@ class Spell {
         this.healthrestore = healthrestore;
         this.repeat = repeat;
         this.delay = delay;
-        this.buffname = buffname;
-        this.buffamount = buffamount;
-        this.buffduration = buffduration;
         this.cooldown = cooldown;
         this.effect = effect;
         this.lastCastTime = null;
@@ -55,38 +54,165 @@ class Spell {
         return true;
     }
 
-    hasEnoughMana (caster) {
-        if (caster.stats.total.currentMana < this.manacost) {
-            console.log(`${caster.name} doesn't have enough mana to cast ${this.description}!`);
-            return false;
+    applyManacost(target) {
+        if (this.manacost) {
+            console.log('MANACOST!');
+            target.stats.total.currentMana -= this.manacost * target.stats.level;
+        }
+    }
+
+    applyHealthcost(caster) {
+        if (this.healthcost) {
+            console.log('HEALTHCOST!');
+            caster.stats.total.currentHP -= this.healthcost * caster.stats.level;
+        }
+    }
+
+    hasEnoughMana (caster, target) {
+        if (this.manacost) {
+            const manacost = this.manacost * target.stats.level;
+            if (caster.stats.total.currentMana < manacost) {
+                console.log(`${caster.name} doesn't have enough mana to cast ${this.description}!`);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    hasEnoughHealth(caster) {
+        if (this.healthcost) {
+            const healthcost = caster.stats.total.totalHP / this.healthcost; 
+            if (caster.stats.total.currentHP < healthcost) {
+                console.log(`If you cast ${this.description}, it will kill you!`);
+                return false;
+            }
         }
         return true;
     }
 
 
+
     cast(caster, target) {
         // console.log('this.manacost', this.manacost);
         // console.log(caster.stats.total.currentMana)
-        if (!this.isOffCooldown() || !this.hasEnoughMana(caster)) return false;
+        if (!this.isOffCooldown() || !this.hasEnoughMana(caster, target) || !this.hasEnoughHealth(caster)) return false;
 
         console.log('casting...')
         this.lastCastTime = gameClock.getTime();
+        this.applyHealthcost(caster);
+        this.applyManacost(target);
         // console.log('currentMana', caster.stats.total.currentMana)
-        caster.stats.total.currentMana -= this.manacost * target.stats.level;
 
-        // console.log('caster.stats.total.currentMana', caster.stats.total.currentMana);
+
+
+
+        if (typeof this.manarestore === 'function') {
+            caster.stats.total.currentMana += this.manarestore(caster);
+        }
+
+        if (typeof this.healthrestore === 'function') {
+            caster.stats.total.currentHP += this.healthrestore(caster);
+        }
+
 
         console.log(`${this.name} is cast!`);
         this.effect(caster, target);
 
-        if (target.stats.total.currentHP < 0) {
+        console.log('target stats total currentHP', target.stats.total.currentHP);
+        if (target.stats.total.currentHP <= 0) {
             target.stats.total.currentHP = 0;
+            checkandHandleBossDefeat();
         }
-        if (caster.stats.total.currentHP < 0) {
+        if (caster.stats.total.currentHP <= 0) {
             caster.stats.total.currentHP = 0;
         }
     }
 }
+
+export class Buff extends Spell {
+    constructor({ 
+        description,
+        name,
+        nameid,
+        actionType,
+        manacost,
+        healthcost,
+        manarestore,
+        healthrestore,
+        cooldown,
+        duration,
+        buffName,
+        buffDuration,
+    }) {
+        super({
+            description,
+            name,
+            nameid,
+            actionType,
+            manacost,
+            healthcost,
+            manarestore,
+            healthrestore,
+            repeat: 0, // Default value for Buff
+            delay: 0,  // Default value for Buff
+            cooldown,
+        });
+        this.duration = duration;
+        this.buffName = buffName;
+        this.buffDuration = buffDuration;
+        this.lastCastTime = null;
+
+    }
+
+    apply(caster) {
+        if (!this.isOffCooldown()) {
+            const remainingCooldown = this.cooldown - (gameClock.getTime() - this.lastAppliedTime);
+            console.log(`${this.name} is on cooldown. (${remainingCooldown / 1000}s remaining)`);
+            return false;
+        }
+
+        if(!this.hasEnoughMana(caster) || !this.hasEnoughHealth(caster)) {
+            console.log(`${caster.name} doesn't have enough mana or health to cast ${this.name}!`);
+        }
+
+        console.log('applying buff...');
+        this.lastAppliedTime = gameClock.getTime();
+
+        this.applyHealthcost(caster);
+        this.applyManacost(target);
+
+        if (typeof this.manarestore === 'function') {
+            this.manarestore();
+        }
+
+        if (typeof this.healthrestore === 'function') {
+            this.healthrestore();
+        }
+
+
+        if (this.buffName) {
+            caster.stats.buffs[this.buffName] = 1.5;
+        }
+
+        buffTimeoutIds.push(setTimeout(() => {
+            caster.stats.buffs[this.buffName] = 1;
+        }, this.buffDuration));
+
+
+
+        caster.activeBuffs.push({
+            name: this.name,
+            statAffected: this.statAffected,
+            amount: this.amount,
+            expiryTime: gameClock.getTime() + this.duration
+        });
+
+        console.log(`${this.name} applied to ${caster.name}, increasing ${this.buffName.replace('buff', '')} by 50% for ${this.duration / 1000} seconds.`);
+        return true;
+    }
+}
+
+
 
 
 
@@ -101,6 +227,7 @@ export const spells = {
         const totalHP = caster.stats.total.totalHP;
         console.log('------------------------------');
 
+        console.log('HEALTH RESTORED', lifesteal);
         currentHP += lifesteal;
 
         caster.stats.total.currentHP = currentHP;
@@ -125,23 +252,27 @@ export const spells = {
         // console.log('currentMana', currentMana);
     },
 
+    // SPELLS
     basicAttack: new Spell({
         description: "Attack",
         name: "basicAttack",
         nameid: "spell-basic",
         manacost: 0,
         healthcost: 0,
+        manarestore: 0,
+        healthrestore: 0,
+        actionType: "damage",
+        repeat: 0,
+        delay: 0,
         cooldown: 2000,
         effect: (caster, target) => {
             spells.restoreHealth(caster);
             spells.restoreMana(caster);
                 
-
             const finalDamage = Math.floor(caster.stats.total.totalDamage * caster.stats.buffs.buffDamage * caster.stats.nerfs.nerfDamage);
             console.log('final BASIC Damage', finalDamage)
 
             target.stats.total.currentHP -= finalDamage;
-
         }
     }),
 
@@ -158,20 +289,138 @@ export const spells = {
         healthrestore: 0,
         repeat: 0,
         delay: 0,
-        buffname: "",
-        buffamount: 0,
-        buffduration: undefined,
         cooldown: 5000,
         effect: (caster, target) => {
             
             const totalDamage = (caster.stats.total.totalDamage / 2) * caster.stats.buffs.buffDamage * caster.stats.nerfs.nerfDamage;
-            const iceDMG = caster.stats.total.totalIceDMG * caster.stats.buffs.buffIce * caster.stats.nerfs.nerfIce;
+            const iceDMG = caster.stats.total.totalIceDMG * caster.stats.buffs.buffIce;
             const magicPow = (caster.stats.total.totalMagicPow / 2) * caster.stats.buffs.buffMagicPow * caster.stats.nerfs.nerfMagicPow;
 
-            const finalDamage = Math.floor(totalDamage + iceDMG + magicPow);
+            console.log('totalDamage', totalDamage, 'iceDMG', iceDMG, 'magicPow', magicPow)
+
+            const finalDamage = Math.floor((totalDamage + iceDMG + magicPow) * caster.stats.nerfs.nerfIce);
+
+            console.log('final ICE Damage', finalDamage)
 
             target.stats.total.currentHP -= finalDamage;
             console.log(`${target.name} takes ${finalDamage} ice damage! Remaining HP: ${target.stats.total.currentHP}`);
+        }
+    }),
+
+
+    // BUFFS
+    buffBasicDamage: new Buff({
+        description: "Buff Basic Damage",
+        name: "buffDamage",
+        nameid: "buff-basic",
+        actionType: "buff",
+        manacost: 10,
+        healthcost: 0,
+        manarestore: 0,
+        healthrestore: 0,
+        repeat: 0,
+        delay: 0,
+        buffName: "buffDamage",
+        buffDuration: 8000,
+        cooldown: 15000,
+    }),
+
+    buffIce: new Buff({
+        description: "Buff Ice Damage",
+        name: "buffIce",
+        nameid: "buff-basic",
+        actionType: "buff",
+        manacost: 10,
+        healthcost: 0,
+        manarestore: 0,
+        healthrestore: 0,
+        repeat: 0,
+        delay: 0,
+        buffName: "buffIce",
+        buffDuration: 8000,
+        cooldown: 15000,
+    }),
+
+    buffFire: new Buff({
+        description: "Buff Fire Damage",
+        name: "buffFire",
+        nameid: "buff-basic",
+        actionType: "buff",
+        manacost: 10,
+        healthcost: 0,
+        manarestore: 0,
+        healthrestore: 0,
+        repeat: 0,
+        delay: 0,
+        buffName: "buffFire",
+        buffDuration: 8000,
+        cooldown: 15000,
+    }),
+
+    buffStorm: new Buff({
+        description: "Buff Storm Damage",
+        name: "buffStorm",
+        nameid: "buff-basic",
+        actionType: "buff",
+        manacost: 10,
+        healthcost: 0,
+        manarestore: 0,
+        healthrestore: 0,
+        repeat: 0,
+        delay: 0,
+        buffName: "buffStorm",
+        buffDuration: 8000,
+        cooldown: 15000,
+    }),
+
+    buffNature: new Buff({
+        description: "Buff Nature Damage",
+        name: "buffNature",
+        nameid: "buff-basic",
+        actionType: "buff",
+        manacost: 10,
+        healthcost: 0,
+        manarestore: 0,
+        healthrestore: 0,
+        repeat: 0,
+        delay: 0,
+        buffName: "buffNature",
+        buffDuration: 8000,
+        cooldown: 15000,
+    }),
+
+    buffShadow: new Buff({
+        description: "Buff Shadow Damage",
+        name: "buffShadow",
+        nameid: "buff-basic",
+        actionType: "buff",
+        manacost: 10,
+        healthcost: 0,
+        manarestore: 0,
+        healthrestore: 0,
+        repeat: 0,
+        delay: 0,
+        buffName: "buffShadow",
+        buffDuration: 8000,
+        cooldown: 15000,
+    }),
+
+
+    bloodSap: new Buff({
+        description: "Caster sacrifices 25% of their health to deal BloodDMG 3 times, and heal caster for BloodDMG/3. Also gets buff for BloodDMG",
+        name: "bloodSap",
+        nameid: "spell-blood",
+        manacost: 0,
+        manarestore: 0,
+        // healthrestore: Math.floor(BloodDMG/3),
+        repeat: 3,
+        delay: 1000,
+        buffname: "buffBlood",
+        // buffamount: Math.floor(BloodDMG ),
+        buffduration: 5000,
+        cooldown: 10000,
+        effect: (caster, target) => {
+            
         }
     })
 

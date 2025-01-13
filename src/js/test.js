@@ -5,7 +5,7 @@ let fightOver = true;
 let timeoutIds = [];
 let i = 0;
 
-function clearAllTimeouts () {
+function clearAllTimeouts (timeoutIds) {
     console.log('clearAllTimeouts', timeoutIds)
     while(timeoutIds.length){
       clearTimeout(timeoutIds.pop());
@@ -28,7 +28,6 @@ function resetGame() {
         hp: 100,
     }
 
-    console.log('Boss HP', boss.hp)
     fightOver = false;
 }
 
@@ -38,7 +37,6 @@ function applyDmgBuff() {
     timeoutIds.push(setTimeout(() => {
         player.totalDmgBuff = 0;
     }, dmgBuff.duration));
-    console.log(timeoutIds)
 }
 
 function pressAttack () {
