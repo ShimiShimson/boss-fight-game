@@ -1,6 +1,11 @@
+// @ts-ignore
 import { player } from "./player.js";
+import { fightOver } from "../game/game.js";
 
-export const nerfTimeoutIds = [];
+import * as BUTTONS from "../ui/buttons.js";
+import * as GLOBALS from '../utils/globals.js';
+import * as DISPLAYS from "../ui/displays.js";
+import { $ } from "../utils/helpers.js";
 
 class Boss {
     name = 'Boss';
@@ -10,16 +15,16 @@ class Boss {
         base: {
             totalHP: 100,
             currentHP: 100,
-            totalDamage: 80,
+            baseDMG: 20,
         }
     };
 
     arrayOfNerfNames = Object.keys(player.stats.nerfs);
-    excludedStrings = ["nerfHealth", "nerfMana"];
+    excludedStrings = ["nerfHP", "nerfMana"];
     nerfNames = this.arrayOfNerfNames.filter(nerf => !this.excludedStrings.includes(nerf));
     
     // [
-    //     "nerfDamage",
+    //     "nerfDMG",
     //     "nerfMagicPow",
     //     "nerfDodge",
     //     "nerfIce",
@@ -35,6 +40,58 @@ class Boss {
 
     copyNerfNames = [...this.nerfNames];
 
+    getNerfColor(nerfName) {
+        switch (nerfName) {
+                case 'nerfIce':
+                    return '#41a7e5';
+                case 'nerfFire':
+                    return '#dc951f';
+                case 'nerfStorm':
+                    return '#dfd019';
+                case 'nerfNature':
+                    return '#1e9e43';
+                case 'nerfShadow':
+                    return '#924193';
+                case 'nerfBlood':
+                case 'nerfLifesteal':
+                case 'nerfCritical':
+                    return '#bb0218';
+                case 'nerfHealPow':
+                    return '#0ebb02';
+                case 'nerfDodge':
+                    return '#6e727e';
+                case 'nerfMagicPow':
+                    return '#b3aacf';
+                case 'nerfDMG':
+                    return '#8b8b8b';
+                default:
+                    return 'white';
+        }
+    }
+    
+    displayNerfMessage(nerfName, type) {
+
+        const newParagraph = document.createElement('p');
+
+        const spellColor = this.getNerfColor(nerfName);
+
+        newParagraph.style.color = spellColor;
+
+
+        let message = '';
+
+        if (type === 'cast') {
+            message = `${this.name} casts ${nerfName}!`;    
+        }
+        if (type === 'unnerf') {
+            message = `${nerfName.replace('nerf', '')} is unnerfed!`;    
+            
+        }
+        newParagraph.innerText = message;
+
+        $('boss-description-div').prepend(newParagraph);
+    }
+
     checkAndCastRandomNerf(player) {
 
         //TEST NERFING
@@ -45,9 +102,6 @@ class Boss {
         //     console.log('UNNERFED', player.stats.nerfs["nerfIce"]);
         // }, 5000);
 
-
-
-        // console.log('nerfNames', this.nerfNames);
         const shouldCast = Math.random() < 0.5;
         if (shouldCast) {
             if (this.copyNerfNames.length === 0) {
@@ -57,19 +111,54 @@ class Boss {
             const randomNerfId = Math.floor(Math.random() * this.copyNerfNames.length);
 
             const randomNerfName = this.copyNerfNames.splice(randomNerfId, 1)[0];
-            // console.log('randomNerf', randomNerfName);
+            console.log('randomNerf', randomNerfName);
             player.stats.nerfs[randomNerfName] = 0.1;
+            this.displayNerfMessage(randomNerfName, 'cast');
             // console.log('NERFS', player.stats.nerfs)
             // console.log(`${this.name} casts ${randomNerfName}!`);
             // console.log(this.copyNerfNames)
+            BUTTONS.createSpellButtons();
 
-            nerfTimeoutIds.push(setTimeout(() => {
+            GLOBALS.nerfTimeoutIds.push(setTimeout(() => {
                 player.stats.nerfs[randomNerfName] = 1;
-                console.log('UNNERFED', randomNerfName, player.stats.nerfs[randomNerfName]);
+                this.displayNerfMessage(randomNerfName, 'unnerf');
+                BUTTONS.createSpellButtons();
             }, 10000));
 
             // console.log('nerfTimeoutIds', nerfTimeoutIds)
         }
+    }
+
+    startBossAttackLoop() {
+        const bossAttackIntervalId = setInterval(() => {
+            boss.checkAndCastRandomNerf(player);
+    
+            player.stats.base.currentHP -= boss.stats.base.baseDMG;
+            DISPLAYS.updateDescription('boss-description-div', `Boss attacks for ${boss.stats.base.baseDMG} DMG!`);
+            DISPLAYS.updateDisplays();
+
+            if (player.stats.base.currentHP <= 0) {
+                clearInterval(bossAttackIntervalId);
+                fightOver();
+                player.playerDefeated();
+                return;
+            }
+        }, 2000);
+
+        GLOBALS.setBossAttackIntervalId(bossAttackIntervalId);
+    }
+
+    action(player) {
+
+    }
+
+    updateBossOnLevelUp = () => {
+        this.stats.base.totalHP = this.stats.level * 100 + (Math.floor(this.stats.level/25)*10000)+(Math.floor(this.stats.level/100)*10000);
+        this.stats.base.currentHP = this.stats.base.totalHP;
+    
+        this.stats.base.baseDMG = this.stats.level * 15 + (Math.floor(this.stats.level/25)*150)+(Math.floor(this.stats.level/100)*150);
+    
+        // console.log('boss HP',boss.stats.base.totalHP, 'boss DMG', boss.stats.base.baseDMG);
     }
 }
 

@@ -27,8 +27,8 @@ class Inventory {
     updateStats() {
         let totalHp = 100; // Base HP
         let totalMagicalPower = 0; // Base Magical Power
-        let totalFireDmg = 0; // Base Fire Damage
-        let totalIceDmg = 0; // Base Ice Damage
+        let totalFireDmg = 0; // Base Fire DMG
+        let totalIceDmg = 0; // Base Ice DMG
 
         if (this.equippedItems.weapon) {
             totalMagicalPower += this.equippedItems.weapon.addMagicalPower || 0;
@@ -41,7 +41,6 @@ class Inventory {
         }
 
         // Update player's stats in the game (this part depends on how the game is structured)
-        console.log(`Total HP: ${totalHp}, Total Magical Power: ${totalMagicalPower}, Fire Damage: ${totalFireDmg}, Ice Damage: ${totalIceDmg}`);
     }
 
     updateInventoryDisplay() {
@@ -59,5 +58,5 @@ class Inventory {
 const inventory = new Inventory();
 document.addEventListener('contextmenu', (event) => {
     const item = /* logic to get the item based on the event */
-    inventory.handleRightClick(event, item);
+    inventory.handleRightClick(event);
 });

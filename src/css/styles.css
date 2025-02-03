@@ -1,10 +1,15 @@
 /* General Styles */
 * {
     box-sizing: border-box;
+    font-family: "Play", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 18px;
 }
 
 html,
 body {
+    font-family: "Play", sans-serif;
     height: 100%;
 }
 
@@ -37,7 +42,8 @@ p {
         "player-stats boss-description-div boss-area player-description-div inventory"
         "player-stats spells spells spells inventory"
         "player-stats action-buttons action-buttons action-buttons inventory"
-        "player-hp-bar-div player-hp-bar-div player-hp-bar-div player-hp-bar-div player-hp-bar-div";
+        "player-hp-bar-div player-hp-bar-div player-hp-bar-div player-hp-bar-div player-hp-bar-div"
+        "player-mana-bar-div player-mana-bar-div player-mana-bar-div player-mana-bar-div player-mana-bar-div";
     grid-template-columns: 1fr 2fr 2fr 2fr 1fr;
     gap: 10px;
     width: 100%;
@@ -54,6 +60,11 @@ p {
     text-align: center;
 }
 
+#player-mana-bar-div {
+    grid-area: player-mana-bar-div;
+    text-align: center;
+}
+
 #equipped-items {
     grid-area: equipped-items;
 }
@@ -61,7 +72,7 @@ p {
 .main-grid-item {
     border: 1px solid #444;
     padding: 10px;
-    background-color: rgba(40, 40, 50, 0.9);
+    background-color: rgba(45, 45, 60, 0.9);
 }
 
 .equipment-grid {
@@ -92,11 +103,10 @@ p {
     overflow-y: auto;
 }
 
-#player-description-div {
-    grid-area: player-description-div;
-    height: 500px;
-    overflow-y: auto;
+#boss-description-div p {
+    font-weight: bold;
 }
+
 
 /* Boss Area */
 #boss-area {
@@ -107,8 +117,15 @@ p {
 /* Player Actions */
 #player-description-div {
     grid-area: player-description-div;
+    height: 500px;
+    overflow-y: auto;
     text-align: right;
 }
+
+#player-description-div p {
+    font-weight: bold;
+}
+
 
 /* Inventory */
 #inventory {
@@ -133,6 +150,7 @@ p {
 /* Player Stats */
 #player-stats {
     grid-area: player-stats;
+    min-width: 200px;
 }
 
 /* Spell Section */
@@ -257,11 +275,11 @@ button.spell {
     background: url(../img/spell-icons.png) 0 -750px;
 }
 
-#spell-dodge {
+#buff-dodge {
     background: url(../img/spell-icons.png) 0 -800px;
 }
 
-#buff-health {
+#buff-HP {
     background: url(../img/spell-icons.png) 0 -850px;
 }
 
@@ -383,20 +401,33 @@ h3 {
     background: #0056b3;
 }
 
-.hp-bar-div {
+.hp-bar-div, .mana-bar-div {
     border: 3px black;
     width: 100%;
     padding: 0px;
 }
 
-.hp-bar {
+.hp-bar, .mana-bar {
     width: 0;
     transition: width 0.5s;
     width: 50%;
     height: 20px;
+    
+}
+
+.hp-bar {
     background-color: darkred;
+}
+
+.mana-bar {
+    background-color: darkblue;
 }
 
 button {
     color: white;
+}
+
+p {
+    color: white;
+    text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000, 0px 1px 0 #000, 0px -1px 0 #000, -1px 0px 0 #000, 1px 0px 0 #000, 2px 2px 0 #000, -2px 2px 0 #000, 2px -2px 0 #000, -2px -2px 0 #000, 0px 2px 0 #000, 0px -2px 0 #000, -2px 0px 0 #000, 2px 0px 0 #000, 1px 2px 0 #000, -1px 2px 0 #000, 1px -2px 0 #000, -1px -2px 0 #000, 2px 1px 0 #000, -2px 1px 0 #000, 2px -1px 0 #000, -2px -1px 0 #000;
 }

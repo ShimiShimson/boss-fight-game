@@ -10,7 +10,7 @@ class GameClock {
             this.elapsedTime += 100; // Increment by 100ms
         }, 100);
         this.elapsedInterval = setInterval(() => {
-            console.log(`Elapsed time: ${this.elapsedTime/1000}`);
+            console.log(`Elapsed time: ${this.elapsedTime}`);
         }, 1000);
 
     }

@@ -7,6 +7,9 @@
     <title>Boss Fight Game</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="shortcut icon" href="./img/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -48,7 +51,7 @@
 
             <!-- Boss Area -->
             <div id="boss-area" class="main-grid-item">
-                <h2>Boss HP: <span id="boss-current-health"></span>/<span id="boss-total-health"></span></h2>
+                <h2>Boss HP: <span id="boss-current-HP"></span>/<span id="boss-total-HP"></span></h2>
                 <img src="img/boss.png" alt="Boss Image">
                 <p>Level: <span id="boss-level">48</span></p>
             </div>
@@ -117,7 +120,17 @@
                 <h2>Player Stats</h2>
                 <p>HP: <span id="player-current-hp"></span>/<span id="player-total-hp"></span></p>
                 <p>Mana: <span id="player-current-mana"></span>/<span id="player-total-mana"></span></p>
-                <p>Magical Power: <span id="player-magical-power"></span></p>
+                <p>Base DMG: <span id="player-base-pow"></span></p>
+                <p>Magic Pow: <span id="player-magic-pow"></span></p>
+                <p>Ice Pow: <span id="player-ice-pow"></span></p>
+                <p>Fire Pow: <span id="player-fire-pow"></span></p>
+                <p>Storm Pow: <span id="player-storm-pow"></span></p>
+                <p>Nature Pow: <span id="player-nature-pow"></span></p>
+                <p>Shadow Pow: <span id="player-shadow-pow"></span></p>
+                <p>Blood Pow: <span id="player-blood-pow"></span></p>
+                <p>Heal Pow: <span id="player-heal-pow"></span></p>
+                <p>Dodge: <span id="player-dodge-pow"></span></p>
+
             </div>
 
             <!-- Spell Section (Above Action Buttons) -->
@@ -145,7 +158,7 @@
                     <button type="button" class="spell" id="buff-shadow">Buff Shadow</button>
                     <button type="button" class="spell" id="buff-blood">Buff Blood</button>
                     <button type="button" class="spell" id="buff-heal">Buff Heal</button>
-                    <button type="button" class="spell" id="buff-health">Buff Health</button>
+                    <button type="button" class="spell" id="buff-HP">Buff HP</button>
                     <button type="button" class="spell" id="spell-lotus">Lotus</button>
                     <button type="button" class="spell" id="buff-magic">Buff Magic</button>
                     <button type="button" class="spell" id="buff-placeholder1">Buff PH</button> -->
@@ -159,8 +172,12 @@
                 <button type="button" id="fight-boss-btn" class="button">Fight Boss!</button>
                 <button type="button" class="button">Boss Level Increase</button>
             </div>
+
             <div id="player-hp-bar-div" class="main-grid-item hp-bar-div">
                 <div id="player-hp-bar" class="hp-bar"></div>
+            </div>
+            <div id="player-mana-bar-div" class="main-grid-item mana-bar-div">
+                <div id="player-mana-bar" class="mana-bar"></div>
             </div>
 
             <div id="modal">

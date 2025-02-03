@@ -1,7 +1,7 @@
 import { $ } from "../utils/helpers.js";
 
 
-export default class Modal {
+class Modal {
     showModal(message) {
         const modal = $('modal');
         const modalMessage = $('modal-message');
@@ -21,3 +21,5 @@ export default class Modal {
         overlay.style.display = 'none'; // Hide overlay
     }
 }
+
+export const modal = new Modal();

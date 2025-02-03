@@ -1,6 +1,6 @@
 function generateLoot() {
     const lootItems = [
-        { name: "Health Potion", addHp: 20, addMagicalPower: 0, addFireDmg: 0, addIceDmg: 0 },
+        { name: "HP Potion", addHp: 20, addMagicalPower: 0, addFireDmg: 0, addIceDmg: 0 },
         { name: "Mana Potion", addHp: 0, addMagicalPower: 20, addFireDmg: 0, addIceDmg: 0 },
         { name: "Fire Staff", addHp: 0, addMagicalPower: 10, addFireDmg: 15, addIceDmg: 0 },
         { name: "Ice Wand", addHp: 0, addMagicalPower: 10, addFireDmg: 0, addIceDmg: 15 },

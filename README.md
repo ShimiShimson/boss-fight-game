@@ -7,7 +7,7 @@ Boss Fight Game is an interactive web-based game where players can engage in epi
 
 ## Features
 - **Elemental Spells**: Use different spells to attack the boss.
-- **Healing**: Restore health during the fight.
+- **Healing**: Restore HP during the fight.
 - **Mana Management**: Restore mana to continue casting spells.
 - **Description Box**: Displays the current state of the fight and events.
 - **Loot System**: Randomly generated items with unique stats upon defeating the boss.
