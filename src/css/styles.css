@@ -112,6 +112,14 @@ p {
 #boss-area {
     grid-area: boss-area;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+}
+
+#boss-image {
+    position: relative;
 }
 
 /* Player Actions */
@@ -431,3 +439,29 @@ p {
     color: white;
     text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000, 0px 1px 0 #000, 0px -1px 0 #000, -1px 0px 0 #000, 1px 0px 0 #000, 2px 2px 0 #000, -2px 2px 0 #000, 2px -2px 0 #000, -2px -2px 0 #000, 0px 2px 0 #000, 0px -2px 0 #000, -2px 0px 0 #000, 2px 0px 0 #000, 1px 2px 0 #000, -1px 2px 0 #000, 1px -2px 0 #000, -1px -2px 0 #000, 2px 1px 0 #000, -2px 1px 0 #000, 2px -1px 0 #000, -2px -1px 0 #000;
 }
+
+
+.damage-popup {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 20px;
+    color: red;
+    font-weight: bold;
+    opacity: 1;
+    pointer-events: none;
+    animation: floatUp 2s ease-out forwards;
+    z-index: 10;
+}
+  
+  @keyframes floatUp {
+    0% {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(-50%) translateY(-50px);
+      opacity: 0;
+    }
+  }

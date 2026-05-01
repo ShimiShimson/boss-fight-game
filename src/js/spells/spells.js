@@ -1,5 +1,7 @@
 // @ts-nocheck
 import { gameClock } from "../game/clock.js";
+import { checkandHandleBossDefeat } from "../game/game.js";
+import { $ } from "../utils/helpers.js";
 
 import * as BUTTONS from "../ui/buttons.js";
 import * as DISPLAYS from "../ui/displays.js";
@@ -116,6 +118,22 @@ class Spell {
         console.log(`${caster.name} restores ${restoreAmount} ${resource}! Current ${resource}: ${caster.stats.base[`current${resource}`]}`);
     }
 
+    showDamageNumber(damageAmount) {
+        const bossElement = $("boss-area");
+        console.log("bossElement", bossElement)
+  
+        const damageEl = document.createElement("div");
+        damageEl.className = "damage-popup";
+        damageEl.textContent = `-${damageAmount}`;
+  
+        bossElement.appendChild(damageEl);
+  
+        // Remove after animation ends
+        setTimeout(() => {
+          damageEl.remove();
+        }, 2000); // Match animation duration
+      }
+
 
     cast(caster, target) {
         // console.log('this.costMana', this.costMana);
@@ -138,8 +156,19 @@ class Spell {
 
 
         console.log(`${this.name} is cast!`);
+
+        let finaldDmg = 0;
         if (typeof this.effect === 'function') {
-            this.effect(caster, target);
+            finaldDmg = this.effect(caster, target);
+        }
+
+        if (this.actionType === "damage" || this.actionType === "restore") {
+            this.displaySpellMessage(caster, target);
+        }
+
+        if (this.actionType === "damage") {
+            console.log('FINAL DMG:', finaldDmg);
+            this.showDamageNumber(finaldDmg); // Directly call the method
         }
 
         DISPLAYS.updateDisplays();
@@ -152,17 +181,13 @@ class Spell {
             caster.stats.base.currentHP = 0;
         }
 
-        if (this.actionType === "damage" || this.actionType === "restore") {
-            this.displaySpellMessage(caster, target);
-        }
-
         return true;
     };  
 
     displaySpellMessage(caster, target) {
         const spellColor = this.getSpellColor();
         const spellMessage = `<p style="color: ${spellColor};">${caster.name} casts ${this.description}!</p>`;
-        document.getElementById('player-description-div').innerHTML = spellMessage + document.getElementById('player-description-div').innerHTML;
+        $('player-description-div').innerHTML = spellMessage + document.getElementById('player-description-div').innerHTML;
     }
 
     getSpellColor() {
@@ -297,8 +322,10 @@ class Buff extends Spell {
 
     displayBuffMessage(caster) {
         const spellColor = this.getSpellColor();
-        const spellMessage = `<p style="color: ${spellColor};">${caster.name} applies ${this.description}, increasing ${this.buffName.replace('buff', '')} by 50% for ${this.buffDuration / 1000} seconds.</p>`;
-        $('player-description-div').prepend(spellMessage);
+        const buffMessage = `<p style="color: ${spellColor};">${caster.name} applies ${this.description}, increasing ${this.buffName.replace('buff', '')} by 50% for ${this.buffDuration / 1000} seconds.</p>`;
+        $('player-description-div').innerHTML = buffMessage + document.getElementById('player-description-div').innerHTML;
+
+        // $('player-description-div').prepend(buffMessage);
     }
 }
 
@@ -393,6 +420,7 @@ const updateSpells = (caster, target) => {
                 console.log('final BASIC DMG', finalDMG);
 
                 target.stats.base.currentHP -= finalDMG;
+                return finalDMG;
             }
         }),
 
@@ -429,6 +457,7 @@ const updateSpells = (caster, target) => {
 
                 target.stats.base.currentHP -= finalDMG;
                 console.log(`${target.name} takes ${finalDMG} ice damage! Remaining HP: ${target.stats.base.currentHP}`);
+                return finalDMG;
             }
         }),
 
@@ -457,6 +486,7 @@ const updateSpells = (caster, target) => {
 
                 target.stats.base.currentHP -= finalDMG;
                 console.log(`${target.name} takes ${finalDMG} fire damage! Remaining HP: ${target.stats.base.currentHP}`);
+                return finalDMG;
             }
         }),
 
@@ -485,6 +515,7 @@ const updateSpells = (caster, target) => {
 
                 target.stats.base.currentHP -= finalDMG;
                 console.log(`${target.name} takes ${finalDMG} storm damage! Remaining HP: ${target.stats.base.currentHP}`);
+                return finalDMG;
             }
         }),
 
@@ -513,6 +544,7 @@ const updateSpells = (caster, target) => {
 
                 target.stats.base.currentHP -= finalDMG;
                 console.log(`${target.name} takes ${finalDMG} nature damage! Remaining HP: ${target.stats.base.currentHP}`);
+                return finalDMG;
             }
         }),
 
@@ -541,6 +573,7 @@ const updateSpells = (caster, target) => {
 
                 target.stats.base.currentHP -= finalDMG;
                 console.log(`${target.name} takes ${finalDMG} shadow damage! Remaining HP: ${target.stats.base.currentHP}`);
+                return finalDMG;
             }
         }),
 
@@ -570,6 +603,7 @@ const updateSpells = (caster, target) => {
 
                 target.stats.base.currentHP -= finalDMG;
                 console.log(`${target.name} takes ${finalDMG} blood damage! Remaining HP: ${target.stats.base.currentHP}`);
+                return finalDMG;
             }
         }),
 
@@ -637,6 +671,7 @@ const updateSpells = (caster, target) => {
 
                 target.stats.base.currentHP -= finalDMG;
                 console.log(`${target.name} takes ${finalDMG} magic damage! Remaining HP: ${target.stats.base.currentHP}`);
+                return finalDMG;
             }
         }),
 
@@ -779,6 +814,7 @@ const updateSpells = (caster, target) => {
                 console.log('final BLOOD DMG', finalDMG)
 
                 target.stats.base.currentHP -= finalDMG;
+                return finalDMG;
                 console.log(`${target.name} takes ${finalDMG} blood damage! Remaining HP: ${target.stats.base.currentHP}`);
             }
         }),

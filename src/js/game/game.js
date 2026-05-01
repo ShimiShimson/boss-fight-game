@@ -17,15 +17,6 @@ import * as DISPLAYS from '../ui/displays.js';
 export let isFightOn = false;
 
 
-function checkBossDefeated() {
-    if (boss.stats.base.currentHP <= 0) {
-        updateDescription('boss-description', "Boss is defeated! Looting...");
-        // Trigger loot generation here
-        return true;
-    }
-    return false;
-}
-
 function resetStats() {
     // console.log(player.stats.buffs);
     // console.log(player.stats.nerfs);
@@ -53,7 +44,7 @@ export function checkandHandleBossDefeat() {
         if (GLOBALS.bossAttackIntervalId) {
             clearInterval(GLOBALS.bossAttackIntervalId);
         }
-        updateDescription('boss-description', "Boss is DEAD! Looting...");
+        modal.showModal("Boss is DEAD! Looting...")
         // Trigger loot generation here
         fightOver();
         return true;
@@ -76,6 +67,11 @@ function startFight() {
     gameClock.start();
 
     boss.startBossAttackLoop();
+
+    const testDamageEl = document.createElement("div");
+    testDamageEl.className = "damage-popup";
+    testDamageEl.textContent = "-100";
+    $("boss-image").appendChild(testDamageEl);
 }
 
 export function fightOver() {

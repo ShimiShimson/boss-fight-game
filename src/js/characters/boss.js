@@ -13,8 +13,8 @@ class Boss {
         level: 1,
 
         base: {
-            totalHP: 100,
-            currentHP: 100,
+            totalHP: 0,
+            currentHP: 0,
             baseDMG: 20,
         }
     };
@@ -153,7 +153,7 @@ class Boss {
     }
 
     updateBossOnLevelUp = () => {
-        this.stats.base.totalHP = this.stats.level * 100 + (Math.floor(this.stats.level/25)*10000)+(Math.floor(this.stats.level/100)*10000);
+        this.stats.base.totalHP = this.stats.level * 20 + (Math.floor(this.stats.level/25)*10000)+(Math.floor(this.stats.level/100)*10000);
         this.stats.base.currentHP = this.stats.base.totalHP;
     
         this.stats.base.baseDMG = this.stats.level * 15 + (Math.floor(this.stats.level/25)*150)+(Math.floor(this.stats.level/100)*150);

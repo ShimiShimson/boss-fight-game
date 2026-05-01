@@ -91,7 +91,7 @@ class Player {
 
 
 export const updatePlayerOnLevelUp = (player) => {
-    player.stats.base.totalHP = 200 * player.stats.level;
+    player.stats.base.totalHP = 20 * player.stats.level;
     player.stats.base.currentHP = player.stats.base.totalHP;
     player.stats.base.totalMana = 100 * player.stats.level;
     player.stats.base.currentMana = player.stats.base.totalMana;
